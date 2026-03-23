@@ -132,7 +132,9 @@ export default function Register() {
                 🇹🇷 +90
               </div>
               <input
-                type="tel"
+                type="text"
+                inputMode="numeric"
+                autoComplete="off"
                 value={formatPhone(phone)}
                 onChange={(e) => setPhone(e.target.value.replace(/\D/g, '').slice(0, 10))}
                 placeholder="5XX XXX XX XX"
