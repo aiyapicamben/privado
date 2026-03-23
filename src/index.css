@@ -104,31 +104,42 @@ body {
   min-height: 100dvh;
 }
 
-/* Twemoji — Apple-like emoji images */
+/* Twemoji — clean, borderless like Telegram */
 img.emoji {
-  height: 1.2em;
-  width: 1.2em;
-  margin: 0 0.05em 0 0.1em;
+  height: 1.15em;
+  width: 1.15em;
+  margin: 0 0.05em;
   vertical-align: -0.15em;
   display: inline;
   pointer-events: none;
   user-select: none;
+  border: none !important;
+  outline: none !important;
+  box-shadow: none !important;
+  background: transparent !important;
+  padding: 0 !important;
+  -webkit-filter: none;
+  filter: none;
+  image-rendering: auto;
+  -webkit-user-drag: none;
 }
 
-/* Larger emoji in icon containers */
+/* Map marker emojis */
 .togg-marker-inner img.emoji {
   height: 22px;
   width: 22px;
   margin: 0;
   vertical-align: middle;
+  border: none !important;
 }
 
-/* Toast emoji icons */
+/* Toast emojis */
 .toast img.emoji {
-  height: 18px;
-  width: 18px;
-  margin: 0;
+  height: 16px;
+  width: 16px;
+  margin: 0 4px 0 0;
   vertical-align: -2px;
+  border: none !important;
 }
 
 #root {

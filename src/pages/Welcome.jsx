@@ -24,7 +24,7 @@ const slides = [
 ];
 
 export default function Welcome() {
-  const { navigateTo } = useApp();
+  const { navigateTo, setUser } = useApp();
   const [currentSlide, setCurrentSlide] = useState(0);
 
   useEffect(() => {
@@ -217,7 +217,11 @@ export default function Welcome() {
         </button>
         <button
           className="btn btn-secondary btn-full"
-          onClick={() => navigateTo(APP_STATES.MAP)}
+          onClick={() => {
+            // Set a flag so Register knows to skip KYC after OTP
+            setUser(prev => ({ ...prev, kycStatus: 'approved' }));
+            navigateTo(APP_STATES.REGISTER);
+          }}
           style={{ fontSize: 'var(--font-sm)', fontWeight: 600 }}
         >
           Zaten hesabım var

@@ -3,7 +3,7 @@ import { useApp, APP_STATES } from '../context/AppContext';
 import StatusBar from '../components/StatusBar';
 
 export default function Register() {
-  const { navigateTo, setUser, showToast } = useApp();
+  const { navigateTo, setUser, showToast, user } = useApp();
   const [phone, setPhone] = useState('');
   const [showOtp, setShowOtp] = useState(false);
   const [otp, setOtp] = useState(['', '', '', '', '', '']);
@@ -50,8 +50,15 @@ export default function Register() {
       setIsVerifying(true);
       setTimeout(() => {
         setUser(prev => ({ ...prev, phone: `+90${phone}`, isVerified: true }));
-        showToast('Telefon doğrulandı ✓', 'success');
-        setTimeout(() => navigateTo(APP_STATES.KYC), 500);
+        showToast('Telefon doğrulandı ✅', 'success');
+        // If returning user (kycStatus already approved), skip KYC
+        setTimeout(() => {
+          if (user.kycStatus === 'approved') {
+            navigateTo(APP_STATES.MAP);
+          } else {
+            navigateTo(APP_STATES.KYC);
+          }
+        }, 500);
       }, 1500);
     }
   };
