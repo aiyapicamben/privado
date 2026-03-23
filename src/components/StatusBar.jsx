@@ -1,10 +1,23 @@
-import { useState } from 'react';
-import { useApp, APP_STATES } from '../context/AppContext';
+import { useState, useEffect } from 'react';
 
 export default function StatusBar() {
+  const [time, setTime] = useState('');
+
+  useEffect(() => {
+    const update = () => {
+      const now = new Date();
+      const h = now.getHours().toString().padStart(2, '0');
+      const m = now.getMinutes().toString().padStart(2, '0');
+      setTime(`${h}:${m}`);
+    };
+    update();
+    const interval = setInterval(update, 10000); // update every 10s
+    return () => clearInterval(interval);
+  }, []);
+
   return (
     <div className="status-bar">
-      <span className="status-bar-time">22:10</span>
+      <span className="status-bar-time">{time}</span>
       <div className="status-bar-icons">
         <svg width="16" height="12" viewBox="0 0 16 12" fill="currentColor">
           <rect x="0" y="8" width="3" height="4" rx="0.5"/>

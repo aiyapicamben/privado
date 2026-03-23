@@ -13,19 +13,19 @@ export default function Register() {
   const timerRef = useRef(null);
 
   useEffect(() => {
-    if (showOtp && timer > 0) {
-      timerRef.current = setInterval(() => {
-        setTimer(prev => {
-          if (prev <= 1) {
-            clearInterval(timerRef.current);
-            return 0;
-          }
-          return prev - 1;
-        });
-      }, 1000);
-    }
+    if (!showOtp) return;
+    setTimer(60);
+    timerRef.current = setInterval(() => {
+      setTimer(prev => {
+        if (prev <= 1) {
+          clearInterval(timerRef.current);
+          return 0;
+        }
+        return prev - 1;
+      });
+    }, 1000);
     return () => clearInterval(timerRef.current);
-  }, [showOtp, timer]);
+  }, [showOtp]);
 
   const handlePhoneSubmit = () => {
     if (phone.length < 10) {
@@ -76,8 +76,7 @@ export default function Register() {
       {/* Header */}
       <div style={{ padding: 'var(--space-lg)' }}>
         <button
-          onClick={() => navigateTo(showOtp ? null : APP_STATES.WELCOME)}
-          onClickCapture={() => showOtp && setShowOtp(false)}
+          onClick={() => showOtp ? setShowOtp(false) : navigateTo(APP_STATES.WELCOME)}
           style={{
             background: 'var(--glass-bg)',
             border: '1px solid var(--glass-border)',

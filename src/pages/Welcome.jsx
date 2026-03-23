@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useApp, APP_STATES } from '../context/AppContext';
 import StatusBar from '../components/StatusBar';
 
@@ -7,13 +7,13 @@ const slides = [
     icon: '🚗',
     emoji: '⚡',
     title: 'TOGG ile Özgürce Sür',
-    desc: 'Türkiye\'nin elektrikli otomobili TOGG ile şehir içi ulaşımın en akıllı yolunu keşfedin.',
+    desc: "Türkiye'nin elektrikli otomobili TOGG ile şehir içi ulaşımın en akıllı yolunu keşfedin.",
   },
   {
     icon: '📍',
     emoji: '🗺️',
     title: 'Yakınındaki Aracı Bul',
-    desc: 'Haritada en yakın TOGG\'u bulun, kilidini açın ve hemen sürmeye başlayın.',
+    desc: "Haritada en yakın TOGG'u bulun, kilidini açın ve hemen sürmeye başlayın.",
   },
   {
     icon: '💰',
@@ -26,6 +26,14 @@ const slides = [
 export default function Welcome() {
   const { navigateTo } = useApp();
   const [currentSlide, setCurrentSlide] = useState(0);
+
+  // Auto-advance slides every 3 seconds
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setCurrentSlide(prev => (prev + 1) % slides.length);
+    }, 3000);
+    return () => clearInterval(timer);
+  }, []);
 
   return (
     <div className="screen" style={{

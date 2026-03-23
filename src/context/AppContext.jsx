@@ -22,6 +22,16 @@ export const APP_STATES = {
   TRIP_SUMMARY: 'trip_summary',
 };
 
+const initialDriveState = {
+  isActive: false,
+  isPaused: false,
+  startTime: null,
+  elapsedSeconds: 0,
+  totalCostTL: 0,
+  drivingSeconds: 0,
+  waitingSeconds: 0,
+};
+
 export function AppProvider({ children }) {
   const [appState, setAppState] = useState(APP_STATES.WELCOME);
   const [user, setUser] = useState({
@@ -30,20 +40,19 @@ export function AppProvider({ children }) {
     kycStatus: 'none', // none, pending, approved
   });
   const [selectedVehicle, setSelectedVehicle] = useState(null);
-  const [driveState, setDriveState] = useState({
-    isActive: false,
-    isPaused: false,
-    startTime: null,
-    elapsedSeconds: 0,
-    totalCostTL: 0,
-    drivingSeconds: 0,
-    waitingSeconds: 0,
-  });
+  const [driveState, setDriveState] = useState(initialDriveState);
   const [toast, setToast] = useState(null);
+  const [toastTimeout, setToastTimeout] = useState(null);
 
   const showToast = useCallback((message, type = 'info') => {
+    // Clear any existing toast timeout to avoid overlapping timers
+    setToastTimeout(prev => {
+      if (prev) clearTimeout(prev);
+      return null;
+    });
     setToast({ message, type });
-    setTimeout(() => setToast(null), 3000);
+    const id = setTimeout(() => setToast(null), 3000);
+    setToastTimeout(id);
   }, []);
 
   const navigateTo = useCallback((state) => {
@@ -52,13 +61,9 @@ export function AppProvider({ children }) {
 
   const startDrive = useCallback(() => {
     setDriveState({
+      ...initialDriveState,
       isActive: true,
-      isPaused: false,
       startTime: Date.now(),
-      elapsedSeconds: 0,
-      totalCostTL: 0,
-      drivingSeconds: 0,
-      waitingSeconds: 0,
     });
     setAppState(APP_STATES.ACTIVE_DRIVE);
   }, []);
@@ -75,15 +80,7 @@ export function AppProvider({ children }) {
   const resetAll = useCallback(() => {
     setAppState(APP_STATES.MAP);
     setSelectedVehicle(null);
-    setDriveState({
-      isActive: false,
-      isPaused: false,
-      startTime: null,
-      elapsedSeconds: 0,
-      totalCostTL: 0,
-      drivingSeconds: 0,
-      waitingSeconds: 0,
-    });
+    setDriveState(initialDriveState);
   }, []);
 
   const value = {

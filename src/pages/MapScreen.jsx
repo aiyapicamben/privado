@@ -5,6 +5,23 @@ import { useApp, APP_STATES } from '../context/AppContext';
 import { mockVehicles, parkingZones, userLocation } from '../data/mockData';
 import StatusBar from '../components/StatusBar';
 
+// Haversine distance formula (returns meters)
+function getDistance(lat1, lng1, lat2, lng2) {
+  const R = 6371000;
+  const dLat = (lat2 - lat1) * Math.PI / 180;
+  const dLng = (lng2 - lng1) * Math.PI / 180;
+  const a = Math.sin(dLat/2) * Math.sin(dLat/2) +
+            Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) *
+            Math.sin(dLng/2) * Math.sin(dLng/2);
+  const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+  return Math.round(R * c);
+}
+
+function formatDistance(meters) {
+  if (meters < 1000) return `${meters}m`;
+  return `${(meters / 1000).toFixed(1)}km`;
+}
+
 // Custom car marker icon
 function createCarIcon(battery) {
   const color = battery > 50 ? '#2ed573' : battery > 25 ? '#ffa502' : '#ff4757';
@@ -64,6 +81,13 @@ export default function MapScreen() {
   const { navigateTo, selectedVehicle, setSelectedVehicle, showToast } = useApp();
   const [showSheet, setShowSheet] = useState(false);
   const [showLegend, setShowLegend] = useState(false);
+  const [reservationTimer, setReservationTimer] = useState(null);
+  const reservationIntervalRef = useRef(null);
+
+  // Clean up timer on unmount
+  useEffect(() => {
+    return () => clearInterval(reservationIntervalRef.current);
+  }, []);
 
   const handleVehicleClick = (vehicle) => {
     setSelectedVehicle(vehicle);
@@ -73,6 +97,20 @@ export default function MapScreen() {
   const handleReserve = () => {
     showToast('Araç 15 dakika ücretsiz rezerve edildi! ⏱️', 'success');
     setShowSheet(false);
+    // Start 15 minute countdown
+    const totalSeconds = 15 * 60;
+    setReservationTimer(totalSeconds);
+    clearInterval(reservationIntervalRef.current);
+    reservationIntervalRef.current = setInterval(() => {
+      setReservationTimer(prev => {
+        if (prev <= 1) {
+          clearInterval(reservationIntervalRef.current);
+          showToast('Rezervasyon süresi doldu!', 'error');
+          return null;
+        }
+        return prev - 1;
+      });
+    }, 1000);
     setTimeout(() => navigateTo(APP_STATES.PRE_DRIVE), 800);
   };
 
@@ -220,6 +258,36 @@ export default function MapScreen() {
         <MapCenterButton />
       </MapContainer>
 
+      {/* Reservation countdown badge */}
+      {reservationTimer !== null && (
+        <div className="animate-fadeInUp" style={{
+          position: 'absolute',
+          bottom: showSheet ? '370px' : '160px',
+          left: '16px',
+          right: '16px',
+          display: 'flex',
+          justifyContent: 'center',
+          zIndex: 999,
+          transition: 'bottom var(--transition-slow)',
+        }}>
+          <div style={{
+            background: 'rgba(255, 165, 2, 0.9)',
+            borderRadius: 'var(--radius-full)',
+            padding: '6px 18px',
+            border: '1px solid rgba(255,165,2,0.5)',
+            boxShadow: '0 4px 20px rgba(255,165,2,0.3)',
+            display: 'flex',
+            alignItems: 'center',
+            gap: '8px',
+          }}>
+            <span style={{ fontSize: '14px' }}>⏱️</span>
+            <span style={{ fontSize: 'var(--font-sm)', fontWeight: 700, color: '#000' }}>
+              Rezervasyon: {Math.floor(reservationTimer / 60)}:{String(reservationTimer % 60).padStart(2,'0')}
+            </span>
+          </div>
+        </div>
+      )}
+
       {/* Vehicle count badge */}
       <div className="animate-fadeInUp" style={{
         position: 'absolute',
@@ -361,7 +429,10 @@ export default function MapScreen() {
                   color: 'var(--togg-teal)',
                   marginBottom: '2px',
                 }}>
-                  150m
+                  {formatDistance(getDistance(
+                    userLocation.lat, userLocation.lng,
+                    selectedVehicle.lat, selectedVehicle.lng
+                  ))}
                 </div>
                 <div style={{
                   fontSize: 'var(--font-xs)',

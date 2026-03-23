@@ -9,6 +9,8 @@ export default function StarRating({ onRate }) {
     if (onRate) onRate(value);
   };
 
+  const active = hover || rating;
+
   return (
     <div style={{
       display: 'flex',
@@ -26,9 +28,10 @@ export default function StarRating({ onRate }) {
             border: 'none',
             cursor: 'pointer',
             fontSize: '36px',
-            transition: 'transform 150ms ease',
-            transform: (hover === star || rating === star) ? 'scale(1.2)' : 'scale(1)',
-            filter: star <= (hover || rating) ? 'none' : 'grayscale(1) opacity(0.3)',
+            transition: 'transform 150ms ease, filter 150ms ease',
+            // Only scale the specific hovered/selected star, not the previous ones
+            transform: star === active ? 'scale(1.3)' : star < active ? 'scale(1.1)' : 'scale(1)',
+            filter: star <= active ? 'none' : 'grayscale(1) opacity(0.3)',
           }}
         >
           ⭐

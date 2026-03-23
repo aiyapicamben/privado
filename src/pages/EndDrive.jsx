@@ -16,8 +16,15 @@ export default function EndDrive() {
   const [rating, setRating] = useState(0);
   const [showSuccess, setShowSuccess] = useState(false);
 
-  const totalMinutes = Math.ceil(driveState.elapsedSeconds / 60) || 12;
+  const totalSeconds = driveState.elapsedSeconds || 720;
+  const totalMinutes = Math.ceil(totalSeconds / 60);
   const totalCost = driveState.totalCostTL > 0 ? driveState.totalCostTL : 87.5;
+
+  // Use real tracked segments written by ActiveDrive
+  const drivingSeconds = driveState.drivingSeconds || Math.round(totalSeconds * 0.8);
+  const waitingSeconds = driveState.waitingSeconds || Math.max(0, totalSeconds - drivingSeconds);
+  const drivingMin = Math.ceil(drivingSeconds / 60);
+  const waitingMin = Math.ceil(waitingSeconds / 60);
 
   const handleParkConfirm = () => {
     setStep(STEPS.PHOTO_PROOF);
@@ -421,7 +428,7 @@ export default function EndDrive() {
                   🚗 Sürüş Süresi
                 </span>
                 <span style={{ fontWeight: 600 }}>
-                  {Math.ceil(totalMinutes * 0.75)} dk × {selectedVehicle?.pricing?.driving || 10} ₺
+                  {drivingMin} dk × {selectedVehicle?.pricing?.driving || 10} ₺
                 </span>
               </div>
 
@@ -434,7 +441,7 @@ export default function EndDrive() {
                   ⏸️ Bekleme Süresi
                 </span>
                 <span style={{ fontWeight: 600 }}>
-                  {Math.ceil(totalMinutes * 0.25)} dk × {selectedVehicle?.pricing?.waiting || 2} ₺
+                  {waitingMin} dk × {selectedVehicle?.pricing?.waiting || 2} ₺
                 </span>
               </div>
 

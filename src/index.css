@@ -235,6 +235,11 @@ img {
   box-shadow: var(--shadow-teal);
 }
 
+.btn-primary:hover {
+  box-shadow: 0 6px 30px rgba(0, 212, 170, 0.5);
+  transform: translateY(-1px);
+}
+
 .btn-primary:active {
   transform: scale(0.97);
 }
@@ -244,6 +249,11 @@ img {
   color: var(--togg-white);
   border: 1px solid var(--glass-border);
   backdrop-filter: blur(10px);
+}
+
+.btn-secondary:hover {
+  background: rgba(255, 255, 255, 0.13);
+  border-color: rgba(255, 255, 255, 0.2);
 }
 
 .btn-secondary:active {
@@ -616,4 +626,9 @@ img {
 .toast-info {
   background: rgba(79, 172, 254, 0.95);
   color: #fff;
+}
+
+@keyframes fadeOut {
+  from { opacity: 1; transform: translateX(-50%) translateY(0); }
+  to { opacity: 0; transform: translateX(-50%) translateY(-10px); }
 }

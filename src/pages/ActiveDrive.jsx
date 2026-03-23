@@ -4,29 +4,34 @@ import StatusBar from '../components/StatusBar';
 import SwipeButton from '../components/SwipeButton';
 
 export default function ActiveDrive() {
-  const { navigateTo, selectedVehicle, driveState, setDriveState, togglePause, showToast, endDrive } = useApp();
+  const { selectedVehicle, setDriveState, showToast, navigateTo } = useApp();
   const [elapsed, setElapsed] = useState(0);
   const [cost, setCost] = useState(0);
   const [isPaused, setIsPaused] = useState(false);
+  const isPausedRef = useRef(false);
+  const drivingSecondsRef = useRef(0);
+  const waitingSecondsRef = useRef(0);
   const intervalRef = useRef(null);
 
   const drivingRate = selectedVehicle?.pricing?.driving || 10;
   const waitingRate = selectedVehicle?.pricing?.waiting || 2;
 
+  // Single interval that reads isPaused from a ref to avoid stale closure
   useEffect(() => {
     intervalRef.current = setInterval(() => {
-      setElapsed((prev) => {
-        const newElapsed = prev + 1;
-        return newElapsed;
-      });
-      setCost((prev) => {
-        const rate = isPaused ? waitingRate : drivingRate;
+      setElapsed(prev => prev + 1);
+      if (isPausedRef.current) {
+        waitingSecondsRef.current += 1;
+      } else {
+        drivingSecondsRef.current += 1;
+      }
+      setCost(prev => {
+        const rate = isPausedRef.current ? waitingRate : drivingRate;
         return prev + rate / 60;
       });
     }, 1000);
-
     return () => clearInterval(intervalRef.current);
-  }, [isPaused, drivingRate, waitingRate]);
+  }, [drivingRate, waitingRate]);
 
   const formatTime = (seconds) => {
     const hrs = Math.floor(seconds / 3600);
@@ -39,8 +44,10 @@ export default function ActiveDrive() {
   };
 
   const handlePause = () => {
-    setIsPaused(!isPaused);
-    if (!isPaused) {
+    const next = !isPaused;
+    setIsPaused(next);
+    isPausedRef.current = next;
+    if (next) {
       showToast('Bekleme modu aktif - Kapılar kilitlendi 🔒', 'info');
     } else {
       showToast('Sürüş devam ediyor - Kapılar açıldı 🔓', 'success');
@@ -53,6 +60,8 @@ export default function ActiveDrive() {
       isActive: false,
       elapsedSeconds: elapsed,
       totalCostTL: cost,
+      drivingSeconds: drivingSecondsRef.current,
+      waitingSeconds: waitingSecondsRef.current,
     }));
     navigateTo(APP_STATES.END_DRIVE);
   };
