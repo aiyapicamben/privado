@@ -9,12 +9,16 @@ import EndDrive from './pages/EndDrive';
 
 function Toast({ toast }) {
   if (!toast) return null;
+  const icons = { success: '✅', error: '❌', info: 'ℹ️' };
   return (
-    <div className={`toast toast-${toast.type}`}>
-      {toast.type === 'success' && '✓ '}
-      {toast.type === 'error' && '✕ '}
-      {toast.type === 'info' && 'ℹ '}
-      {toast.message}
+    <div className={`toast toast-${toast.type}`} style={{
+      backdropFilter: 'blur(20px)',
+      WebkitBackdropFilter: 'blur(20px)',
+    }}>
+      <span style={{ fontFamily: 'var(--font-emoji)', fontSize: '16px', flexShrink: 0 }}>
+        {icons[toast.type] || 'ℹ️'}
+      </span>
+      <span>{toast.message}</span>
     </div>
   );
 }
