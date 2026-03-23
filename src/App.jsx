@@ -24,13 +24,13 @@ function Toast({ toast }) {
 function AppContent() {
   const { appState, toast } = useApp();
 
-  // Render emojis as PNG (no black border issue unlike SVG)
+  // Render exact Apple iOS emojis using emoji-datasource-apple CDN
   useEffect(() => {
     if (window.twemoji) {
       window.twemoji.parse(document.body, {
-        folder: '72x72',
+        folder: 'img/apple/64',
         ext: '.png',
-        base: 'https://cdn.jsdelivr.net/gh/twitter/twemoji@14.0.2/assets/',
+        base: 'https://cdn.jsdelivr.net/npm/emoji-datasource-apple@15.0.1/',
       });
     }
   });

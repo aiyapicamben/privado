@@ -69,101 +69,67 @@ export default function EndDrive() {
         <StatusBar />
 
         <div className="animate-fadeInUp" style={{
-          display: 'flex',
-          flexDirection: 'column',
-          alignItems: 'center',
-          gap: 'var(--space-xl)',
+          display: 'flex', flexDirection: 'column', alignItems: 'center',
+          gap: '24px', width: '100%', maxWidth: '340px',
         }}>
           <div style={{
-            width: '120px',
-            height: '120px',
-            borderRadius: '50%',
-            background: 'rgba(255, 165, 2, 0.15)',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            fontSize: '56px',
+            width: '100px', height: '100px', borderRadius: '50%',
+            background: 'rgba(255, 165, 2, 0.1)', border: '1px solid rgba(255, 165, 2, 0.2)',
+            display: 'flex', alignItems: 'center', justifyContent: 'center',
+            fontSize: '52px',
           }}>
             🅿️
           </div>
 
           <div>
-            <h1 style={{
-              fontSize: 'var(--font-2xl)',
-              fontWeight: 800,
-              marginBottom: 'var(--space-sm)',
-            }}>
+            <h1 style={{ fontSize: '30px', fontWeight: 900, marginBottom: '8px', letterSpacing: '-0.5px' }}>
               Park Kontrolü
             </h1>
-            <p style={{
-              color: 'var(--togg-gray-300)',
-              fontSize: 'var(--font-base)',
-              maxWidth: '300px',
-              lineHeight: 1.6,
-            }}>
+            <p style={{ color: 'var(--togg-gray-400)', fontSize: '15px', lineHeight: 1.6 }}>
               İzin verilen bir park alanında olduğunuzdan emin olun ve motoru kapatın.
             </p>
           </div>
 
           {/* Warning card */}
-          <div className="glass-card" style={{
-            padding: 'var(--space-md)',
-            maxWidth: '320px',
-            width: '100%',
-            display: 'flex',
-            alignItems: 'flex-start',
-            gap: 'var(--space-sm)',
-            border: '1px solid rgba(255, 165, 2, 0.3)',
+          <div className="card-premium" style={{
+            padding: '16px', width: '100%', display: 'flex', alignItems: 'flex-start',
+            gap: '12px', border: '1px solid rgba(255, 165, 2, 0.2)', textAlign: 'left',
           }}>
-            <span style={{ fontSize: '20px' }}>⚠️</span>
+            <span style={{ fontSize: '24px' }}>⚠️</span>
             <div>
               <p style={{
-                fontSize: 'var(--font-sm)',
-                fontWeight: 600,
-                color: 'var(--togg-orange)',
-                marginBottom: '4px',
+                fontSize: '14px', fontWeight: 700, color: '#ffa502', marginBottom: '2px',
               }}>
                 Önemli Uyarı
               </p>
-              <p style={{
-                fontSize: 'var(--font-xs)',
-                color: 'var(--togg-gray-400)',
-                lineHeight: 1.5,
-              }}>
+              <p style={{ fontSize: '12px', color: 'var(--togg-gray-400)', lineHeight: 1.5 }}>
                 Yasak bölgede park ederseniz ek ücret yansıtılabilir. Haritadaki yeşil bölgeleri tercih edin.
               </p>
             </div>
           </div>
 
           {/* Checklist */}
-          <div style={{
-            display: 'flex',
-            flexDirection: 'column',
-            gap: 'var(--space-sm)',
-            width: '100%',
-            maxWidth: '320px',
-          }}>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', width: '100%' }}>
             {[
               { text: 'İzin verilen alandayım', icon: '✅' },
               { text: 'Motoru kapattım', icon: '🔑' },
               { text: 'El frenini çektim', icon: '🅿️' },
             ].map((item, i) => (
-              <div key={i} className="glass-card" style={{
-                padding: 'var(--space-md)',
-                display: 'flex',
-                alignItems: 'center',
-                gap: 'var(--space-md)',
+              <div key={i} style={{
+                padding: '14px 16px', display: 'flex', alignItems: 'center', gap: '12px',
+                background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.08)',
+                borderRadius: '16px', textAlign: 'left',
               }}>
                 <span style={{ fontSize: '20px' }}>{item.icon}</span>
-                <span style={{ fontSize: 'var(--font-sm)', fontWeight: 500 }}>{item.text}</span>
+                <span style={{ fontSize: '15px', fontWeight: 600 }}>{item.text}</span>
               </div>
             ))}
           </div>
 
           <button
-            className="btn btn-primary btn-lg btn-full"
+            className="btn btn-primary btn-full"
             onClick={handleParkConfirm}
-            style={{ maxWidth: '320px' }}
+            style={{ fontSize: '16px', padding: '18px', fontWeight: 800, marginTop: '12px' }}
           >
             Onaylıyorum, Devam Et
           </button>
@@ -205,22 +171,13 @@ export default function EndDrive() {
           alignItems: 'center',
           padding: '0 var(--space-lg)',
         }}>
-          <div className="animate-fadeInUp" style={{
-            textAlign: 'center',
-            width: '100%',
-          }}>
-            <h1 style={{
-              fontSize: 'var(--font-2xl)',
-              fontWeight: 800,
-              marginBottom: 'var(--space-sm)',
-            }}>
+          <div className="animate-fadeInUp" style={{ width: '100%', textAlign: 'center' }}>
+            <h1 style={{ fontSize: '28px', fontWeight: 900, marginBottom: '8px', letterSpacing: '-0.5px' }}>
               Fotoğraf Kanıtı
             </h1>
             <p style={{
-              color: 'var(--togg-gray-400)',
-              fontSize: 'var(--font-base)',
-              marginBottom: 'var(--space-xl)',
-              lineHeight: 1.6,
+              color: 'var(--togg-gray-400)', fontSize: '15px',
+              marginBottom: '32px', lineHeight: 1.6,
             }}>
               Park halindeki aracın çevresini gösterecek şekilde bir fotoğraf çekin
             </p>
@@ -229,23 +186,12 @@ export default function EndDrive() {
             <button
               onClick={handleTakePhoto}
               style={{
-                width: '100%',
-                maxWidth: '320px',
-                aspectRatio: '4/3',
-                borderRadius: 'var(--radius-lg)',
-                background: photoTaken
-                  ? 'linear-gradient(135deg, rgba(46,213,115,0.1), rgba(0,212,170,0.1))'
-                  : 'var(--togg-navy-mid)',
-                border: `2px dashed ${photoTaken ? 'var(--togg-green)' : 'var(--togg-gray-400)'}`,
-                display: 'flex',
-                flexDirection: 'column',
-                alignItems: 'center',
-                justifyContent: 'center',
-                gap: 'var(--space-md)',
-                cursor: 'pointer',
-                transition: 'all var(--transition-base)',
-                color: 'var(--togg-white)',
-                margin: '0 auto',
+                width: '100%', maxWidth: '320px', height: '220px', borderRadius: '20px',
+                background: photoTaken ? 'rgba(46,213,115,0.08)' : 'rgba(255,255,255,0.03)',
+                border: `2px dashed ${photoTaken ? 'rgba(46,213,115,0.5)' : 'rgba(255,255,255,0.1)'}`,
+                display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
+                gap: '12px', cursor: 'pointer', margin: '0 auto', transition: 'all 200ms ease',
+                color: photoTaken ? '#2ed573' : 'var(--togg-gray-400)',
               }}
             >
               <span style={{ fontSize: '56px' }}>
@@ -346,135 +292,66 @@ export default function EndDrive() {
         display: 'flex',
         flexDirection: 'column',
       }}>
-        <div className="animate-fadeInUp">
+        <div className="animate-fadeInUp" style={{ width: '100%', textAlign: 'center' }}>
           {/* Success header */}
-          <div style={{
-            textAlign: 'center',
-            marginBottom: 'var(--space-xl)',
-          }}>
             <div style={{
-              width: '80px',
-              height: '80px',
-              borderRadius: '50%',
-              background: 'rgba(0, 212, 170, 0.15)',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              fontSize: '40px',
-              margin: '0 auto var(--space-md)',
+              width: '80px', height: '80px', borderRadius: '50%',
+              background: 'rgba(0, 212, 170, 0.1)', border: '1px solid rgba(0, 212, 170, 0.2)',
+              display: 'flex', alignItems: 'center', justifyContent: 'center',
+              fontSize: '36px', margin: '0 auto 24px',
             }}>
               🏁
             </div>
-            <h1 style={{
-              fontSize: 'var(--font-2xl)',
-              fontWeight: 800,
-            }}>
+            <h1 style={{ fontSize: '32px', fontWeight: 900, marginBottom: '32px', letterSpacing: '-0.5px' }}>
               Sürüş Özeti
             </h1>
           </div>
 
           {/* Summary Card */}
-          <div className="glass-card" style={{
-            padding: 'var(--space-lg)',
-            marginBottom: 'var(--space-lg)',
-          }}>
+          <div className="card-premium" style={{ padding: '20px', marginBottom: '24px', width: '100%' }}>
             {/* Vehicle info */}
             <div style={{
-              display: 'flex',
-              alignItems: 'center',
-              gap: 'var(--space-md)',
-              paddingBottom: 'var(--space-md)',
-              borderBottom: '1px solid var(--glass-border)',
-              marginBottom: 'var(--space-md)',
+              display: 'flex', alignItems: 'center', gap: '16px',
+              paddingBottom: '16px', borderBottom: '1px solid rgba(255,255,255,0.08)',
+              marginBottom: '16px',
             }}>
               <div style={{
-                width: '48px',
-                height: '48px',
-                borderRadius: 'var(--radius-md)',
-                background: 'var(--togg-navy-mid)',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                fontSize: '24px',
+                width: '56px', height: '56px', borderRadius: '16px',
+                background: 'rgba(255,255,255,0.06)', display: 'flex', alignItems: 'center', justifyContent: 'center',
+                fontSize: '28px', border: '1px solid rgba(255,255,255,0.05)',
               }}>
                 🚘
               </div>
-              <div>
-                <h3 style={{ fontWeight: 700 }}>
+              <div style={{ textAlign: 'left' }}>
+                <h3 style={{ fontWeight: 800, fontSize: '18px', color: '#fff', marginBottom: '2px' }}>
                   {selectedVehicle?.model || 'TOGG T10X'}
                 </h3>
-                <p style={{ fontSize: 'var(--font-xs)', color: 'var(--togg-gray-400)' }}>
+                <p style={{ fontSize: '13px', color: 'var(--togg-gray-400)' }}>
                   {selectedVehicle?.plate || '34 TG 1001'}
                 </p>
               </div>
             </div>
 
             {/* Details grid */}
-            <div style={{
-              display: 'flex',
-              flexDirection: 'column',
-              gap: 'var(--space-md)',
-            }}>
-              <div style={{
-                display: 'flex',
-                justifyContent: 'space-between',
-                alignItems: 'center',
-              }}>
-                <span style={{ color: 'var(--togg-gray-400)', fontSize: 'var(--font-sm)' }}>
-                  ⏱️ Toplam Süre
-                </span>
-                <span style={{ fontWeight: 700, fontSize: 'var(--font-lg)' }}>
-                  {totalMinutes} dakika
-                </span>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                <span style={{ color: 'var(--togg-gray-400)', fontSize: '14px' }}>⏱️ Toplam Süre</span>
+                <span style={{ fontWeight: 700, fontSize: '15px', color: '#fff' }}>{totalMinutes} dk</span>
+              </div>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                <span style={{ color: 'var(--togg-gray-400)', fontSize: '14px' }}>🚗 Sürüş</span>
+                <span style={{ fontWeight: 600, fontSize: '15px', color: '#fff' }}>{drivingMin} dk × {selectedVehicle?.pricing?.driving || 10} ₺</span>
+              </div>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                <span style={{ color: 'var(--togg-gray-400)', fontSize: '14px' }}>⏸️ Bekleme</span>
+                <span style={{ fontWeight: 600, fontSize: '15px', color: '#fff' }}>{waitingMin} dk × {selectedVehicle?.pricing?.waiting || 2} ₺</span>
               </div>
 
-              <div style={{
-                display: 'flex',
-                justifyContent: 'space-between',
-                alignItems: 'center',
-              }}>
-                <span style={{ color: 'var(--togg-gray-400)', fontSize: 'var(--font-sm)' }}>
-                  🚗 Sürüş Süresi
-                </span>
-                <span style={{ fontWeight: 600 }}>
-                  {drivingMin} dk × {selectedVehicle?.pricing?.driving || 10} ₺
-                </span>
-              </div>
+              <div style={{ height: '1px', background: 'rgba(255,255,255,0.08)', margin: '4px 0' }} />
 
-              <div style={{
-                display: 'flex',
-                justifyContent: 'space-between',
-                alignItems: 'center',
-              }}>
-                <span style={{ color: 'var(--togg-gray-400)', fontSize: 'var(--font-sm)' }}>
-                  ⏸️ Bekleme Süresi
-                </span>
-                <span style={{ fontWeight: 600 }}>
-                  {waitingMin} dk × {selectedVehicle?.pricing?.waiting || 2} ₺
-                </span>
-              </div>
-
-              <div style={{
-                height: '1px',
-                background: 'var(--glass-border)',
-              }} />
-
-              <div style={{
-                display: 'flex',
-                justifyContent: 'space-between',
-                alignItems: 'center',
-              }}>
-                <span style={{
-                  fontWeight: 700,
-                  fontSize: 'var(--font-lg)',
-                }}>
-                  Toplam Tutar
-                </span>
-                <span style={{
-                  fontWeight: 900,
-                  fontSize: 'var(--font-2xl)',
-                  color: '#00d4aa',
-                }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                <span style={{ fontWeight: 800, fontSize: '16px', color: '#fff' }}>Toplam Tutar</span>
+                <span style={{ fontWeight: 900, fontSize: '24px', color: '#00d4aa' }}>
                   {totalCost.toFixed(2)} ₺
                 </span>
               </div>
@@ -499,38 +376,33 @@ export default function EndDrive() {
           </div>
 
           {/* Rating */}
-          <div style={{
-            textAlign: 'center',
-            marginBottom: 'var(--space-lg)',
-          }}>
-            <h3 style={{
-              fontSize: 'var(--font-lg)',
-              fontWeight: 700,
-              marginBottom: 'var(--space-sm)',
-            }}>
-              Sürüşü Değerlendirin
-            </h3>
-            <p style={{
-              color: 'var(--togg-gray-400)',
-              fontSize: 'var(--font-sm)',
-              marginBottom: 'var(--space-md)',
-            }}>
-              Deneyiminizi 1-5 arası puanlayın
-            </p>
-            <StarRating onRate={setRating} />
+          <div style={{ textAlign: 'center', marginBottom: '32px' }}>
+            <h3 style={{ fontSize: '18px', fontWeight: 800, marginBottom: '8px' }}>
+                Sürüşü Değerlendirin
+              </h3>
+              <p style={{ color: 'var(--togg-gray-400)', fontSize: '14px', marginBottom: '16px' }}>
+                Deneyiminizi 1-5 arası puanlayın
+              </p>
+              <StarRating rating={rating} onRating={setRating} />
+            </div>
+
+            <button
+              className="btn btn-primary btn-full"
+              onClick={handleFinish}
+              disabled={rating === 0}
+              style={{
+                opacity: rating > 0 ? 1 : 0.4, pointerEvents: rating > 0 ? 'auto' : 'none',
+                fontSize: '16px', fontWeight: 800, padding: '18px', transition: 'opacity 200ms ease',
+              }}
+            >
+              Tamamla ✓
+            </button>
           </div>
         </div>
       </div>
+    );
+  }
 
-      {/* Finish button */}
-      <div style={{ padding: '0 var(--space-lg) var(--space-2xl)' }}>
-        <button
-          className="btn btn-primary btn-lg btn-full"
-          onClick={handleFinish}
-        >
-          Tamamla ✓
-        </button>
-      </div>
-    </div>
-  );
+  // Fallback
+  return null;
 }

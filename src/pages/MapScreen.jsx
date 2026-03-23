@@ -386,42 +386,27 @@ export default function MapScreen() {
         <div className="bottom-sheet-handle" />
 
         {selectedVehicle && (
-          <div>
+          <div style={{ padding: '0 8px' }}>
             {/* Vehicle header */}
             <div style={{
-              display: 'flex',
-              alignItems: 'flex-start',
-              justifyContent: 'space-between',
-              marginBottom: 'var(--space-lg)',
+              display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between',
+              marginBottom: '24px',
             }}>
               <div>
-                <h2 style={{
-                  fontSize: 'var(--font-xl)',
-                  fontWeight: 800,
-                  marginBottom: '2px',
-                }}>
+                <h2 style={{ fontSize: '24px', fontWeight: 900, marginBottom: '2px', letterSpacing: '-0.5px' }}>
                   {selectedVehicle.model}
                 </h2>
-                <p style={{
-                  color: 'var(--togg-gray-400)',
-                  fontSize: 'var(--font-sm)',
-                }}>
+                <p style={{ color: 'var(--togg-gray-400)', fontSize: '15px' }}>
                   {selectedVehicle.plate} • {selectedVehicle.color}
                 </p>
               </div>
               <button
                 onClick={() => setShowSheet(false)}
                 style={{
-                  background: 'var(--glass-bg)',
-                  border: '1px solid var(--glass-border)',
-                  borderRadius: 'var(--radius-sm)',
-                  width: '32px',
-                  height: '32px',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  color: 'var(--togg-gray-400)',
-                  fontSize: '14px',
+                  background: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.1)',
+                  borderRadius: '50%', width: '32px', height: '32px',
+                  display: 'flex', alignItems: 'center', justifyContent: 'center',
+                  color: 'var(--togg-gray-400)', fontSize: '12px', cursor: 'pointer',
                 }}
               >
                 ✕
@@ -496,77 +481,59 @@ export default function MapScreen() {
               </div>
             </div>
 
-            {/* Pricing */}
-            <div className="glass-card" style={{
-              padding: 'var(--space-md)',
-              marginBottom: 'var(--space-lg)',
-              display: 'flex',
-              justifyContent: 'space-around',
+            {/* Pricing Section split into 2 */}
+            <div className="card-premium" style={{
+              display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+              marginBottom: '20px', padding: '16px 0',
             }}>
-              <div style={{ textAlign: 'center' }}>
-                <div style={{
-                  fontSize: 'var(--font-sm)',
-                  color: 'var(--togg-gray-400)',
-                  marginBottom: '4px',
-                }}>
-                  🚗 Sürüş
-                </div>
-                <div style={{ fontWeight: 700, fontSize: 'var(--font-lg)' }}>
+              <div style={{ flex: 1, textAlign: 'center' }}>
+                <div style={{ fontSize: '13px', color: 'var(--togg-gray-400)', marginBottom: '4px' }}>🚗 Sürüş (+dk)</div>
+                <div style={{ fontSize: '20px', fontWeight: 800, color: '#fff' }}>
                   {selectedVehicle.pricing.driving} ₺
-                  <span style={{ fontSize: 'var(--font-xs)', color: 'var(--togg-gray-400)', fontWeight: 400 }}>/dk</span>
                 </div>
               </div>
-              <div style={{
-                width: '1px',
-                background: 'var(--glass-border)',
-              }} />
-              <div style={{ textAlign: 'center' }}>
-                <div style={{
-                  fontSize: 'var(--font-sm)',
-                  color: 'var(--togg-gray-400)',
-                  marginBottom: '4px',
-                }}>
-                  ⏸️ Bekleme
-                </div>
-                <div style={{ fontWeight: 700, fontSize: 'var(--font-lg)' }}>
+              <div style={{ width: '1px', height: '40px', background: 'rgba(255,255,255,0.1)' }} />
+              <div style={{ flex: 1, textAlign: 'center' }}>
+                <div style={{ fontSize: '13px', color: 'var(--togg-gray-400)', marginBottom: '4px' }}>⏸️ Bekleme</div>
+                <div style={{ fontSize: '20px', fontWeight: 800, color: '#00d4aa' }}>
                   {selectedVehicle.pricing.waiting} ₺
-                  <span style={{ fontSize: 'var(--font-xs)', color: 'var(--togg-gray-400)', fontWeight: 400 }}>/dk</span>
                 </div>
               </div>
             </div>
 
-            {/* Features */}
+            {/* Features list */}
             <div style={{
-              display: 'flex',
-              gap: 'var(--space-sm)',
-              flexWrap: 'wrap',
-              marginBottom: 'var(--space-lg)',
+              display: 'flex', gap: '8px', flexWrap: 'wrap', marginBottom: '28px',
             }}>
               {selectedVehicle.features.map((f, i) => (
-                <span key={i} className="badge badge-success">
+                <span key={i} style={{
+                  background: 'rgba(46,213,115,0.08)', border: '1px solid rgba(46,213,115,0.2)',
+                  color: '#2ed573', fontSize: '12px', fontWeight: 600,
+                  padding: '6px 12px', borderRadius: '8px',
+                }}>
                   ✦ {f}
                 </span>
               ))}
             </div>
 
             {/* Action Buttons */}
-            <div style={{
-              display: 'flex',
-              gap: 'var(--space-md)',
-            }}>
+            <div style={{ display: 'flex', gap: '12px' }}>
               <button
-                className="btn btn-secondary"
+                className="btn"
                 onClick={handleDirections}
-                style={{ flex: 1 }}
+                style={{
+                  flex: 1, background: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.12)',
+                  color: '#fff', fontSize: '15px', fontWeight: 700,
+                }}
               >
                 🗺️ Yol Tarifi
               </button>
               <button
                 className="btn btn-primary"
                 onClick={handleReserve}
-                style={{ flex: 2 }}
+                style={{ flex: 1.5, fontSize: '15px', fontWeight: 800 }}
               >
-                ⏱️ Rezerve Et (15 dk)
+                ⏱️ Rezerve Et (15')
               </button>
             </div>
           </div>
