@@ -1,3 +1,4 @@
+import { useEffect } from 'react';
 import { useApp, APP_STATES, AppProvider } from './context/AppContext';
 import Welcome from './pages/Welcome';
 import Register from './pages/Register';
@@ -9,22 +10,29 @@ import EndDrive from './pages/EndDrive';
 
 function Toast({ toast }) {
   if (!toast) return null;
-  const icons = { success: '✅', error: '❌', info: 'ℹ️' };
   return (
     <div className={`toast toast-${toast.type}`} style={{
       backdropFilter: 'blur(20px)',
       WebkitBackdropFilter: 'blur(20px)',
     }}>
-      <span style={{ fontFamily: 'var(--font-emoji)', fontSize: '16px', flexShrink: 0 }}>
-        {icons[toast.type] || 'ℹ️'}
-      </span>
-      <span>{toast.message}</span>
+      {toast.message}
     </div>
   );
 }
 
 function AppContent() {
   const { appState, toast } = useApp();
+
+  // Parse all emoji characters into Twemoji SVG images after every render
+  useEffect(() => {
+    if (window.twemoji) {
+      window.twemoji.parse(document.body, {
+        folder: 'svg',
+        ext: '.svg',
+        base: 'https://cdn.jsdelivr.net/gh/twitter/twemoji@14.0.2/assets/',
+      });
+    }
+  });
 
   const renderScreen = () => {
     switch (appState) {

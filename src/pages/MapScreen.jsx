@@ -115,7 +115,10 @@ export default function MapScreen() {
   };
 
   const handleDirections = () => {
-    showToast('Yol tarifi başlatıldı 🗺️', 'info');
+    if (selectedVehicle) {
+      const url = `https://www.google.com/maps/dir/?api=1&origin=${userLocation.lat},${userLocation.lng}&destination=${selectedVehicle.lat},${selectedVehicle.lng}&travelmode=walking`;
+      window.open(url, '_blank');
+    }
   };
 
   return (

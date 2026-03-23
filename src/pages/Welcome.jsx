@@ -94,7 +94,7 @@ export default function Welcome() {
             backdropFilter: 'blur(20px)',
             boxShadow: '0 8px 32px rgba(0,212,170,0.15)',
           }}>
-            <span style={{ fontSize: '38px', fontFamily: 'var(--font-emoji)' }}>🚘</span>
+            <span style={{ fontSize: '38px' }}>🚘</span>
           </div>
           <h1 style={{
             fontSize: 'var(--font-3xl)',
@@ -155,7 +155,7 @@ export default function Welcome() {
               backdropFilter: 'blur(10px)',
               boxShadow: `0 8px 32px ${slide.accent}22`,
             }}>
-              <span style={{ fontFamily: 'var(--font-emoji)' }}>{slide.emoji}</span>
+              <span>{slide.emoji}</span>
             </div>
 
             <h2 style={{

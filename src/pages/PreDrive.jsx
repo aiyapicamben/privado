@@ -26,12 +26,21 @@ export default function PreDrive() {
   }, [step]);
 
   const handleNoDamage = () => {
-    showToast('Hasar kontrolü tamamlandı ✓', 'success');
+    showToast('Hasar kontrolü tamamlandı ✅', 'success');
     setStep(STEPS.QR_SCAN);
   };
 
+  const [showDamageForm, setShowDamageForm] = useState(false);
+  const [damagePhotoTaken, setDamagePhotoTaken] = useState(false);
+  const [damageNote, setDamageNote] = useState('');
+
   const handleReportDamage = () => {
-    showToast('Hasar raporu oluşturuldu. Destek ekibi bilgilendirildi.', 'info');
+    setShowDamageForm(true);
+  };
+
+  const handleSubmitDamage = () => {
+    showToast('Hasar raporu gönderildi. Destek ekibi bilgilendirildi. 📋', 'success');
+    setShowDamageForm(false);
     setStep(STEPS.QR_SCAN);
   };
 
@@ -233,24 +242,111 @@ export default function PreDrive() {
           flexDirection: 'column',
           gap: 'var(--space-md)',
         }}>
-          <button
-            className="btn btn-primary btn-lg btn-full"
-            onClick={handleNoDamage}
-          >
-            ✅ Her Şey Yolunda
-          </button>
-          <button
-            className="btn btn-secondary btn-full"
-            onClick={handleReportDamage}
-            style={{
+          {!showDamageForm ? (
+            <>
+              <button
+                className="btn btn-primary btn-lg btn-full"
+                onClick={handleNoDamage}
+              >
+                ✅ Her Şey Yolunda
+              </button>
+              <button
+                className="btn btn-secondary btn-full"
+                onClick={handleReportDamage}
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  gap: '8px',
+                }}
+              >
+                📷 Hasar Bildir
+              </button>
+            </>
+          ) : (
+            <div className="animate-fadeInUp" style={{
               display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              gap: '8px',
-            }}
-          >
-            📷 Hasar Bildir
-          </button>
+              flexDirection: 'column',
+              gap: 'var(--space-md)',
+            }}>
+              {/* Photo area */}
+              <button
+                onClick={() => setDamagePhotoTaken(true)}
+                style={{
+                  width: '100%',
+                  height: '140px',
+                  borderRadius: 'var(--radius-lg)',
+                  border: `2px dashed ${damagePhotoTaken ? 'var(--togg-green)' : 'var(--glass-border)'}`,
+                  background: damagePhotoTaken ? 'rgba(46,213,115,0.08)' : 'var(--glass-bg)',
+                  color: damagePhotoTaken ? 'var(--togg-green)' : 'var(--togg-gray-400)',
+                  display: 'flex',
+                  flexDirection: 'column',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  gap: '8px',
+                  fontSize: 'var(--font-sm)',
+                  fontWeight: 600,
+                  cursor: 'pointer',
+                  transition: 'all var(--transition-base)',
+                }}
+              >
+                {damagePhotoTaken ? (
+                  <>
+                    <span style={{ fontSize: '28px' }}>✅</span>
+                    <span>Fotoğraf çekildi</span>
+                  </>
+                ) : (
+                  <>
+                    <span style={{ fontSize: '28px' }}>📸</span>
+                    <span>Hasarın fotoğrafını çekin</span>
+                  </>
+                )}
+              </button>
+
+              {/* Note */}
+              <textarea
+                value={damageNote}
+                onChange={(e) => setDamageNote(e.target.value)}
+                placeholder="Hasarı açıklayın (isteğe bağlı)..."
+                rows={3}
+                style={{
+                  width: '100%',
+                  padding: '12px 16px',
+                  borderRadius: 'var(--radius-md)',
+                  background: 'var(--togg-navy-mid)',
+                  border: '2px solid transparent',
+                  color: 'var(--togg-white)',
+                  fontSize: 'var(--font-sm)',
+                  fontFamily: 'var(--font-family)',
+                  resize: 'none',
+                  outline: 'none',
+                  transition: 'border-color var(--transition-fast)',
+                }}
+                onFocus={(e) => e.target.style.borderColor = 'var(--togg-teal)'}
+                onBlur={(e) => e.target.style.borderColor = 'transparent'}
+              />
+
+              {/* Buttons */}
+              <button
+                className="btn btn-primary btn-full"
+                onClick={handleSubmitDamage}
+                disabled={!damagePhotoTaken}
+                style={{
+                  opacity: damagePhotoTaken ? 1 : 0.5,
+                  cursor: damagePhotoTaken ? 'pointer' : 'not-allowed',
+                }}
+              >
+                📋 Hasar Raporunu Gönder
+              </button>
+              <button
+                className="btn btn-secondary btn-full"
+                onClick={() => setShowDamageForm(false)}
+                style={{ fontSize: 'var(--font-sm)' }}
+              >
+                ← Geri Dön
+              </button>
+            </div>
+          )}
         </div>
       </div>
     );
