@@ -359,50 +359,41 @@ export default function EndDrive() {
           </div>
 
           {/* Receipt actions */}
-          <div style={{
-            display: 'flex',
-            gap: 'var(--space-sm)',
-            marginBottom: 'var(--space-xl)',
-          }}>
-            <button className="btn btn-secondary" style={{ flex: 1, fontSize: 'var(--font-sm)' }}>
+          <div style={{ display: 'flex', gap: '12px', marginBottom: '32px', width: '100%' }}>
+            <button className="btn" style={{ flex: 1, background: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.1)', fontSize: '13px' }}>
               📄 Fatura
             </button>
-            <button className="btn btn-secondary" style={{ flex: 1, fontSize: 'var(--font-sm)' }}>
+            <button className="btn" style={{ flex: 1, background: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.1)', fontSize: '13px' }}>
               📧 E-posta
             </button>
-            <button className="btn btn-secondary" style={{ flex: 1, fontSize: 'var(--font-sm)' }}>
+            <button className="btn" style={{ flex: 1, background: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.1)', fontSize: '13px' }}>
               📱 Paylaş
             </button>
           </div>
 
           {/* Rating */}
-          <div style={{ textAlign: 'center', marginBottom: '32px' }}>
+          <div style={{ textAlign: 'center', marginBottom: '32px', width: '100%' }}>
             <h3 style={{ fontSize: '18px', fontWeight: 800, marginBottom: '8px' }}>
-                Sürüşü Değerlendirin
-              </h3>
-              <p style={{ color: 'var(--togg-gray-400)', fontSize: '14px', marginBottom: '16px' }}>
-                Deneyiminizi 1-5 arası puanlayın
-              </p>
-              <StarRating rating={rating} onRating={setRating} />
-            </div>
-
-            <button
-              className="btn btn-primary btn-full"
-              onClick={handleFinish}
-              disabled={rating === 0}
-              style={{
-                opacity: rating > 0 ? 1 : 0.4, pointerEvents: rating > 0 ? 'auto' : 'none',
-                fontSize: '16px', fontWeight: 800, padding: '18px', transition: 'opacity 200ms ease',
-              }}
-            >
-              Tamamla ✓
-            </button>
+              Sürüşü Değerlendirin
+            </h3>
+            <p style={{ color: 'var(--togg-gray-400)', fontSize: '14px', marginBottom: '16px' }}>
+              Deneyiminizi 1-5 arası puanlayın
+            </p>
+            <StarRating rating={rating} onRating={setRating} />
           </div>
+
+          <button
+            className="btn btn-primary btn-full"
+            onClick={handleFinish}
+            disabled={rating === 0}
+            style={{
+              opacity: rating > 0 ? 1 : 0.4, pointerEvents: rating > 0 ? 'auto' : 'none',
+              fontSize: '16px', fontWeight: 800, padding: '18px', transition: 'opacity 200ms ease',
+            }}
+          >
+            Tamamla ✓
+          </button>
         </div>
       </div>
     );
-  }
-
-  // Fallback
-  return null;
 }
