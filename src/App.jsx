@@ -24,12 +24,12 @@ function Toast({ toast }) {
 function AppContent() {
   const { appState, toast } = useApp();
 
-  // Parse emojis with Twemoji for consistent cross-platform rendering
+  // Render emojis as PNG (no black border issue unlike SVG)
   useEffect(() => {
     if (window.twemoji) {
       window.twemoji.parse(document.body, {
-        folder: 'svg',
-        ext: '.svg',
+        folder: '72x72',
+        ext: '.png',
         base: 'https://cdn.jsdelivr.net/gh/twitter/twemoji@14.0.2/assets/',
       });
     }

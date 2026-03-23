@@ -17,10 +17,7 @@ export default function Register() {
     setTimer(60);
     timerRef.current = setInterval(() => {
       setTimer(prev => {
-        if (prev <= 1) {
-          clearInterval(timerRef.current);
-          return 0;
-        }
+        if (prev <= 1) { clearInterval(timerRef.current); return 0; }
         return prev - 1;
       });
     }, 1000);
@@ -33,7 +30,7 @@ export default function Register() {
       return;
     }
     setShowOtp(true);
-    showToast('Doğrulama kodu gönderildi', 'success');
+    showToast('Doğrulama kodu gönderildi 📱', 'success');
   };
 
   const handleOtpChange = (index, value) => {
@@ -41,17 +38,12 @@ export default function Register() {
     const newOtp = [...otp];
     newOtp[index] = value;
     setOtp(newOtp);
-
-    if (value && index < 5) {
-      otpRefs.current[index + 1]?.focus();
-    }
-
+    if (value && index < 5) otpRefs.current[index + 1]?.focus();
     if (newOtp.every(d => d !== '')) {
       setIsVerifying(true);
       setTimeout(() => {
         setUser(prev => ({ ...prev, phone: `+90${phone}`, isVerified: true }));
         showToast('Telefon doğrulandı ✅', 'success');
-        // If returning user (kycStatus already approved), skip KYC
         setTimeout(() => {
           if (user.kycStatus === 'approved') {
             navigateTo(APP_STATES.MAP);
@@ -77,143 +69,125 @@ export default function Register() {
   };
 
   return (
-    <div className="screen" style={{ background: 'var(--gradient-dark)' }}>
+    <div className="screen" style={{ background: 'var(--gradient-dark)', position: 'relative' }}>
+      {/* Ambient glow */}
+      <div style={{
+        position: 'absolute', top: '-10%', right: '-20%',
+        width: '300px', height: '300px', borderRadius: '50%',
+        background: 'radial-gradient(circle, rgba(0,212,170,0.07) 0%, transparent 70%)',
+        pointerEvents: 'none',
+      }} />
+
       <StatusBar />
-      
-      {/* Header */}
-      <div style={{ padding: 'var(--space-lg)' }}>
+
+      {/* Back button */}
+      <div style={{ padding: '4px 20px 8px' }}>
         <button
           onClick={() => showOtp ? setShowOtp(false) : navigateTo(APP_STATES.WELCOME)}
           style={{
-            background: 'var(--glass-bg)',
-            border: '1px solid var(--glass-border)',
-            borderRadius: 'var(--radius-md)',
-            width: '40px',
-            height: '40px',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            color: 'var(--togg-white)',
-            fontSize: '18px',
-            backdropFilter: 'blur(10px)',
+            background: 'rgba(255,255,255,0.06)',
+            border: '1px solid rgba(255,255,255,0.1)',
+            borderRadius: '12px', width: '40px', height: '40px',
+            display: 'flex', alignItems: 'center', justifyContent: 'center',
+            color: '#fff', fontSize: '18px', cursor: 'pointer',
           }}
         >
           ←
         </button>
       </div>
 
-      <div style={{
-        flex: 1,
-        padding: '0 var(--space-lg)',
-        display: 'flex',
-        flexDirection: 'column',
-      }}>
+      <div style={{ flex: 1, padding: '8px 24px', display: 'flex', flexDirection: 'column' }}>
         {!showOtp ? (
-          /* Phone Input */
           <div className="animate-fadeInUp">
-            <h1 style={{
-              fontSize: 'var(--font-2xl)',
-              fontWeight: 800,
-              marginBottom: 'var(--space-sm)',
-            }}>
-              Telefon Numaranız
-            </h1>
-            <p style={{
-              color: 'var(--togg-gray-400)',
-              fontSize: 'var(--font-base)',
-              marginBottom: 'var(--space-xl)',
-              lineHeight: 1.6,
-            }}>
-              Size bir doğrulama kodu göndereceğiz
-            </p>
-
-            <div style={{
-              display: 'flex',
-              alignItems: 'center',
-              gap: 'var(--space-md)',
-              marginBottom: 'var(--space-xl)',
-            }}>
-              {/* Country code */}
+            {/* Title */}
+            <div style={{ marginBottom: '32px' }}>
               <div style={{
-                background: 'var(--togg-navy-mid)',
-                borderRadius: 'var(--radius-md)',
-                padding: '14px 16px',
-                display: 'flex',
-                alignItems: 'center',
-                gap: '8px',
-                fontSize: 'var(--font-lg)',
-                fontWeight: 600,
-                color: 'var(--togg-gray-300)',
-                minWidth: '90px',
+                width: '56px', height: '56px', borderRadius: '16px',
+                background: 'rgba(0,212,170,0.12)', border: '1px solid rgba(0,212,170,0.2)',
+                display: 'flex', alignItems: 'center', justifyContent: 'center',
+                fontSize: '26px', marginBottom: '20px',
+              }}>
+                📱
+              </div>
+              <h1 style={{ fontSize: '28px', fontWeight: 900, marginBottom: '8px', letterSpacing: '-0.5px' }}>
+                Telefon Numaranız
+              </h1>
+              <p style={{ color: 'var(--togg-gray-400)', fontSize: '15px', lineHeight: 1.6 }}>
+                Size bir doğrulama kodu göndereceğiz
+              </p>
+            </div>
+
+            {/* Phone input */}
+            <div style={{
+              display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '16px',
+            }}>
+              <div style={{
+                background: 'rgba(255,255,255,0.05)',
+                border: '1.5px solid rgba(255,255,255,0.1)',
+                borderRadius: '14px', padding: '16px 14px',
+                display: 'flex', alignItems: 'center', gap: '8px',
+                fontSize: '15px', fontWeight: 600, color: 'var(--togg-gray-300)',
+                minWidth: '86px', flexShrink: 0,
               }}>
                 🇹🇷 +90
               </div>
-              
               <input
                 type="tel"
-                className="input-field"
                 value={formatPhone(phone)}
                 onChange={(e) => setPhone(e.target.value.replace(/\D/g, '').slice(0, 10))}
-                placeholder="5XX XXX XXXX"
+                placeholder="5XX XXX XX XX"
                 style={{
                   flex: 1,
-                  fontSize: 'var(--font-lg)',
-                  letterSpacing: '2px',
-                  fontWeight: 600,
+                  background: 'rgba(255,255,255,0.05)',
+                  border: '1.5px solid rgba(255,255,255,0.1)',
+                  borderRadius: '14px', padding: '16px',
+                  fontSize: '18px', fontWeight: 700, letterSpacing: '1.5px',
+                  color: '#fff', outline: 'none', fontFamily: 'var(--font-family)',
+                  transition: 'border-color 200ms ease',
                 }}
+                onFocus={e => e.target.style.borderColor = 'rgba(0,212,170,0.5)'}
+                onBlur={e => e.target.style.borderColor = 'rgba(255,255,255,0.1)'}
                 autoFocus
               />
             </div>
 
+            {/* Security note */}
             <div style={{
-              background: 'var(--glass-bg)',
-              borderRadius: 'var(--radius-md)',
-              padding: 'var(--space-md)',
-              display: 'flex',
-              alignItems: 'flex-start',
-              gap: 'var(--space-sm)',
-              marginBottom: 'var(--space-xl)',
-              border: '1px solid var(--glass-border)',
+              background: 'rgba(0,212,170,0.04)',
+              border: '1px solid rgba(0,212,170,0.12)',
+              borderRadius: '12px', padding: '12px 14px',
+              display: 'flex', alignItems: 'center', gap: '10px',
+              marginBottom: '24px',
             }}>
-              <span style={{ fontSize: '16px' }}>🔒</span>
-              <p style={{
-                fontSize: 'var(--font-xs)',
-                color: 'var(--togg-gray-400)',
-                lineHeight: 1.5,
-              }}>
-                Bilgileriniz 256-bit SSL şifreleme ile korunmaktadır. 
-                Numaranız üçüncü taraflarla paylaşılmaz.
+              <span style={{ fontSize: '15px', flexShrink: 0 }}>🔒</span>
+              <p style={{ fontSize: '12px', color: 'var(--togg-gray-400)', lineHeight: 1.5 }}>
+                256-bit SSL ile şifrelenir. Numaranız paylaşılmaz.
               </p>
             </div>
           </div>
         ) : (
-          /* OTP Input */
           <div className="animate-fadeInUp">
-            <h1 style={{
-              fontSize: 'var(--font-2xl)',
-              fontWeight: 800,
-              marginBottom: 'var(--space-sm)',
-            }}>
-              Doğrulama Kodu
-            </h1>
-            <p style={{
-              color: 'var(--togg-gray-400)',
-              fontSize: 'var(--font-base)',
-              marginBottom: 'var(--space-xl)',
-              lineHeight: 1.6,
-            }}>
-              <span style={{ color: 'var(--togg-white)', fontWeight: 600 }}>
-                +90 {formatPhone(phone)}
-              </span>
-              {' '}numarasına gönderilen 6 haneli kodu girin
-            </p>
+            <div style={{ marginBottom: '32px' }}>
+              <div style={{
+                width: '56px', height: '56px', borderRadius: '16px',
+                background: 'rgba(0,212,170,0.12)', border: '1px solid rgba(0,212,170,0.2)',
+                display: 'flex', alignItems: 'center', justifyContent: 'center',
+                fontSize: '26px', marginBottom: '20px',
+              }}>
+                ✉️
+              </div>
+              <h1 style={{ fontSize: '28px', fontWeight: 900, marginBottom: '8px', letterSpacing: '-0.5px' }}>
+                Doğrulama Kodu
+              </h1>
+              <p style={{ color: 'var(--togg-gray-400)', fontSize: '15px', lineHeight: 1.6 }}>
+                <span style={{ color: '#fff', fontWeight: 700 }}>+90 {formatPhone(phone)}</span>
+                {' '}numarasına gönderilen 6 haneli kodu girin
+              </p>
+            </div>
 
             {/* OTP boxes */}
             <div style={{
-              display: 'flex',
-              gap: '10px',
-              justifyContent: 'center',
-              marginBottom: 'var(--space-xl)',
+              display: 'flex', gap: '8px', justifyContent: 'center', marginBottom: '28px',
             }}>
               {otp.map((digit, i) => (
                 <input
@@ -228,16 +202,14 @@ export default function Register() {
                   autoFocus={i === 0}
                   disabled={isVerifying}
                   style={{
-                    width: '48px',
-                    height: '56px',
-                    borderRadius: 'var(--radius-md)',
-                    background: digit ? 'var(--togg-navy-mid)' : 'var(--togg-navy-mid)',
-                    border: `2px solid ${digit ? 'var(--togg-teal)' : 'transparent'}`,
-                    color: 'var(--togg-white)',
-                    fontSize: 'var(--font-2xl)',
-                    fontWeight: 700,
-                    textAlign: 'center',
-                    transition: 'all var(--transition-fast)',
+                    width: '46px', height: '58px',
+                    borderRadius: '14px',
+                    background: digit ? 'rgba(0,212,170,0.1)' : 'rgba(255,255,255,0.05)',
+                    border: `2px solid ${digit ? 'rgba(0,212,170,0.6)' : 'rgba(255,255,255,0.1)'}`,
+                    color: digit ? '#00d4aa' : '#fff',
+                    fontSize: '24px', fontWeight: 800, textAlign: 'center',
+                    outline: 'none', fontFamily: 'var(--font-family)',
+                    transition: 'all 150ms ease',
                   }}
                 />
               ))}
@@ -245,42 +217,34 @@ export default function Register() {
 
             {isVerifying && (
               <div className="animate-fadeIn" style={{
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                gap: 'var(--space-sm)',
-                marginBottom: 'var(--space-lg)',
+                display: 'flex', alignItems: 'center', justifyContent: 'center',
+                gap: '10px', marginBottom: '20px',
               }}>
                 <div className="animate-spin" style={{
-                  width: '20px',
-                  height: '20px',
-                  border: '2px solid var(--togg-teal)',
-                  borderTopColor: 'transparent',
-                  borderRadius: '50%',
+                  width: '18px', height: '18px',
+                  border: '2px solid rgba(0,212,170,0.3)',
+                  borderTopColor: '#00d4aa', borderRadius: '50%',
                 }} />
-                <span style={{ color: 'var(--togg-teal)', fontWeight: 600 }}>
+                <span style={{ color: '#00d4aa', fontWeight: 600, fontSize: '14px' }}>
                   Doğrulanıyor...
                 </span>
               </div>
             )}
 
-            {/* Timer */}
             <div style={{ textAlign: 'center' }}>
               {timer > 0 ? (
-                <p style={{ color: 'var(--togg-gray-400)', fontSize: 'var(--font-sm)' }}>
-                  Yeni kod gönder ({timer}s)
+                <p style={{ color: 'var(--togg-gray-500)', fontSize: '13px' }}>
+                  Tekrar gönder {timer}s
                 </p>
               ) : (
                 <button
-                  onClick={() => { setTimer(60); showToast('Yeni kod gönderildi', 'info'); }}
+                  onClick={() => { setTimer(60); showToast('Yeni kod gönderildi 📱', 'info'); }}
                   style={{
-                    background: 'none',
-                    color: 'var(--togg-teal)',
-                    fontWeight: 600,
-                    fontSize: 'var(--font-sm)',
+                    background: 'none', color: '#00d4aa',
+                    fontWeight: 700, fontSize: '14px', cursor: 'pointer',
                   }}
                 >
-                  Yeni kod gönder
+                  Yeni kod gönder →
                 </button>
               )}
             </div>
@@ -290,18 +254,19 @@ export default function Register() {
 
       {/* Bottom CTA */}
       {!showOtp && (
-        <div className="animate-fadeInUp" style={{
-          padding: '0 var(--space-lg) var(--space-2xl)',
-        }}>
+        <div style={{ padding: '0 24px 40px' }}>
           <button
-            className="btn btn-primary btn-lg btn-full"
+            className="btn btn-primary btn-full"
             onClick={handlePhoneSubmit}
             style={{
-              opacity: phone.length >= 10 ? 1 : 0.4,
+              padding: '18px', fontSize: '16px', fontWeight: 800,
+              borderRadius: '16px', letterSpacing: '0.3px',
+              opacity: phone.length >= 10 ? 1 : 0.35,
               pointerEvents: phone.length >= 10 ? 'auto' : 'none',
+              transition: 'opacity 200ms ease',
             }}
           >
-            Devam Et
+            Devam Et →
           </button>
         </div>
       )}
