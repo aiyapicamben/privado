@@ -7,6 +7,7 @@ import MapScreen from './pages/MapScreen';
 import PreDrive from './pages/PreDrive';
 import ActiveDrive from './pages/ActiveDrive';
 import EndDrive from './pages/EndDrive';
+import Wallet from './pages/Wallet';
 
 function Toast({ toast }) {
   if (!toast) return null;
@@ -23,7 +24,7 @@ function Toast({ toast }) {
 function AppContent() {
   const { appState, toast } = useApp();
 
-  // Parse all emoji characters into Twemoji SVG images after every render
+  // Parse emojis with Twemoji for consistent cross-platform rendering
   useEffect(() => {
     if (window.twemoji) {
       window.twemoji.parse(document.body, {
@@ -60,6 +61,8 @@ function AppContent() {
       case APP_STATES.PHOTO_PROOF:
       case APP_STATES.TRIP_SUMMARY:
         return <EndDrive />;
+      case APP_STATES.WALLET:
+        return <Wallet />;
       default:
         return <Welcome />;
     }

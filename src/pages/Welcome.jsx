@@ -100,10 +100,7 @@ export default function Welcome() {
             fontSize: 'var(--font-3xl)',
             fontWeight: 900,
             letterSpacing: '-1.5px',
-            background: 'var(--gradient-primary)',
-            WebkitBackgroundClip: 'text',
-            WebkitTextFillColor: 'transparent',
-            backgroundClip: 'text',
+            color: '#00d4aa',
             marginBottom: '4px',
             lineHeight: 1.1,
           }}>
@@ -220,7 +217,7 @@ export default function Welcome() {
         </button>
         <button
           className="btn btn-secondary btn-full"
-          onClick={() => navigateTo(APP_STATES.REGISTER)}
+          onClick={() => navigateTo(APP_STATES.MAP)}
           style={{ fontSize: 'var(--font-sm)', fontWeight: 600 }}
         >
           Zaten hesabım var

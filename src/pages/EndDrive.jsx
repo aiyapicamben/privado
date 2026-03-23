@@ -10,7 +10,7 @@ const STEPS = {
 };
 
 export default function EndDrive() {
-  const { navigateTo, selectedVehicle, driveState, resetAll, showToast } = useApp();
+  const { navigateTo, selectedVehicle, driveState, resetAll, showToast, saveTripToHistory } = useApp();
   const [step, setStep] = useState(STEPS.PARK_CHECK);
   const [photoTaken, setPhotoTaken] = useState(false);
   const [rating, setRating] = useState(0);
@@ -40,6 +40,15 @@ export default function EndDrive() {
   };
 
   const handleFinish = () => {
+    // Save trip to wallet history
+    saveTripToHistory({
+      id: Date.now(),
+      date: new Date().toISOString().split('T')[0],
+      model: selectedVehicle?.model || 'TOGG T10X',
+      plate: selectedVehicle?.plate || '34 TG 1001',
+      durationMin: totalMinutes,
+      cost: parseFloat(totalCost.toFixed(2)),
+    });
     setShowSuccess(true);
     showToast('Teşekkürler! İyi yolculuklar 🎉', 'success');
     setTimeout(() => {
@@ -464,9 +473,7 @@ export default function EndDrive() {
                 <span style={{
                   fontWeight: 900,
                   fontSize: 'var(--font-2xl)',
-                  background: 'var(--gradient-primary)',
-                  WebkitBackgroundClip: 'text',
-                  WebkitTextFillColor: 'transparent',
+                  color: '#00d4aa',
                 }}>
                   {totalCost.toFixed(2)} ₺
                 </span>

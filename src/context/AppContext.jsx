@@ -20,6 +20,7 @@ export const APP_STATES = {
   END_DRIVE: 'end_drive',
   PHOTO_PROOF: 'photo_proof',
   TRIP_SUMMARY: 'trip_summary',
+  WALLET: 'wallet',
 };
 
 const initialDriveState = {
@@ -37,15 +38,43 @@ export function AppProvider({ children }) {
   const [user, setUser] = useState({
     phone: '',
     isVerified: false,
-    kycStatus: 'none', // none, pending, approved
+    kycStatus: 'none',
   });
   const [selectedVehicle, setSelectedVehicle] = useState(null);
   const [driveState, setDriveState] = useState(initialDriveState);
   const [toast, setToast] = useState(null);
   const [toastTimeout, setToastTimeout] = useState(null);
 
+  // Wallet & Trip History
+  const [balance, setBalance] = useState(500.00);
+  const [tripHistory, setTripHistory] = useState([
+    {
+      id: 1,
+      date: '2026-03-22',
+      model: 'TOGG T10X',
+      plate: '34 TG 1003',
+      durationMin: 28,
+      cost: 210.50,
+    },
+    {
+      id: 2,
+      date: '2026-03-20',
+      model: 'TOGG T10X',
+      plate: '34 TG 1001',
+      durationMin: 15,
+      cost: 112.00,
+    },
+    {
+      id: 3,
+      date: '2026-03-18',
+      model: 'TOGG T10F',
+      plate: '06 TG 2001',
+      durationMin: 42,
+      cost: 340.00,
+    },
+  ]);
+
   const showToast = useCallback((message, type = 'info') => {
-    // Clear any existing toast timeout to avoid overlapping timers
     setToastTimeout(prev => {
       if (prev) clearTimeout(prev);
       return null;
@@ -77,6 +106,12 @@ export function AppProvider({ children }) {
     setAppState(APP_STATES.END_DRIVE);
   }, []);
 
+  // Save trip to history and deduct from balance
+  const saveTripToHistory = useCallback((trip) => {
+    setTripHistory(prev => [trip, ...prev]);
+    setBalance(prev => Math.max(0, prev - trip.cost));
+  }, []);
+
   const resetAll = useCallback(() => {
     setAppState(APP_STATES.MAP);
     setSelectedVehicle(null);
@@ -99,6 +134,10 @@ export function AppProvider({ children }) {
     togglePause,
     endDrive,
     resetAll,
+    balance,
+    setBalance,
+    tripHistory,
+    saveTripToHistory,
   };
 
   return <AppContext.Provider value={value}>{children}</AppContext.Provider>;

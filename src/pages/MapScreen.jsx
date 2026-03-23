@@ -48,8 +48,10 @@ const userIcon = L.divIcon({
 });
 
 // Map center control
-function MapCenterButton() {
+function MapCenterButton({ mapRef }) {
   const map = useMap();
+  // Store map reference for parent to use
+  if (mapRef) mapRef.current = map;
   return (
     <button
       onClick={() => map.flyTo([userLocation.lat, userLocation.lng], 16, { duration: 0.8 })}
@@ -82,12 +84,29 @@ export default function MapScreen() {
   const [showSheet, setShowSheet] = useState(false);
   const [showLegend, setShowLegend] = useState(false);
   const [reservationTimer, setReservationTimer] = useState(null);
+  const [searchQuery, setSearchQuery] = useState('');
   const reservationIntervalRef = useRef(null);
+  const mapRef = useRef(null);
 
-  // Clean up timer on unmount
   useEffect(() => {
     return () => clearInterval(reservationIntervalRef.current);
   }, []);
+
+  // Filter vehicles based on search
+  const filteredVehicles = searchQuery.trim()
+    ? mockVehicles.filter(v =>
+        v.model.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        v.plate.toLowerCase().includes(searchQuery.toLowerCase())
+      )
+    : mockVehicles;
+
+  // When search finds a single result, zoom to it
+  useEffect(() => {
+    if (filteredVehicles.length === 1 && mapRef.current) {
+      const v = filteredVehicles[0];
+      mapRef.current.flyTo([v.lat, v.lng], 17, { duration: 0.8 });
+    }
+  }, [filteredVehicles]);
 
   const handleVehicleClick = (vehicle) => {
     setSelectedVehicle(vehicle);
@@ -147,32 +166,63 @@ export default function MapScreen() {
         <div className="animate-fadeInDown" style={{
           background: 'var(--togg-navy-light)',
           borderRadius: 'var(--radius-lg)',
-          padding: '12px 16px',
+          padding: '8px 12px',
           display: 'flex',
           alignItems: 'center',
-          gap: '12px',
+          gap: '10px',
           border: '1px solid var(--glass-border)',
           boxShadow: 'var(--shadow-lg)',
         }}>
-          <span style={{ fontSize: '18px' }}>🔍</span>
-          <span style={{
-            flex: 1,
-            color: 'var(--togg-gray-400)',
-            fontSize: 'var(--font-sm)',
-          }}>
-            Konum veya adres ara...
-          </span>
+          <span style={{ fontSize: '16px', flexShrink: 0 }}>🔍</span>
+          <input
+            type="text"
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            placeholder="Araç veya plaka ara..."
+            style={{
+              flex: 1,
+              background: 'transparent',
+              border: 'none',
+              outline: 'none',
+              color: 'var(--togg-white)',
+              fontSize: 'var(--font-sm)',
+              fontFamily: 'var(--font-family)',
+            }}
+          />
+          {searchQuery && (
+            <button
+              onClick={() => setSearchQuery('')}
+              style={{
+                background: 'rgba(255,255,255,0.1)', border: 'none',
+                borderRadius: '50%', width: '24px', height: '24px',
+                display: 'flex', alignItems: 'center', justifyContent: 'center',
+                color: 'var(--togg-gray-400)', fontSize: '12px', cursor: 'pointer',
+              }}
+            >
+              ✕
+            </button>
+          )}
+          <button
+            onClick={() => navigateTo(APP_STATES.WALLET)}
+            style={{
+              background: 'rgba(0,212,170,0.12)',
+              border: '1px solid rgba(0,212,170,0.25)',
+              borderRadius: 'var(--radius-sm)',
+              width: '36px', height: '36px',
+              display: 'flex', alignItems: 'center', justifyContent: 'center',
+              cursor: 'pointer', fontSize: '16px',
+            }}
+          >
+            💰
+          </button>
           <button
             onClick={() => setShowLegend(!showLegend)}
             style={{
               background: 'var(--glass-bg)',
               border: '1px solid var(--glass-border)',
               borderRadius: 'var(--radius-sm)',
-              width: '36px',
-              height: '36px',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
+              width: '36px', height: '36px',
+              display: 'flex', alignItems: 'center', justifyContent: 'center',
               fontSize: '16px',
               color: 'var(--togg-white)',
             }}
@@ -246,8 +296,8 @@ export default function MapScreen() {
           }}
         />
 
-        {/* Vehicle markers */}
-        {mockVehicles.map((vehicle) => (
+        {/* Vehicle markers — filtered */}
+        {filteredVehicles.map((vehicle) => (
           <Marker
             key={vehicle.id}
             position={[vehicle.lat, vehicle.lng]}
@@ -258,7 +308,7 @@ export default function MapScreen() {
           />
         ))}
 
-        <MapCenterButton />
+        <MapCenterButton mapRef={mapRef} />
       </MapContainer>
 
       {/* Reservation countdown badge */}
