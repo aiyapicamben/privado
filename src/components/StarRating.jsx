@@ -1,40 +1,25 @@
 import { useState } from 'react';
 
-export default function StarRating({ onRate }) {
-  const [rating, setRating] = useState(0);
+export default function StarRating({ rating = 0, onRatingChange }) {
   const [hover, setHover] = useState(0);
 
-  const handleRate = (value) => {
-    setRating(value);
-    if (onRate) onRate(value);
-  };
-
-  const active = hover || rating;
-
   return (
-    <div style={{
-      display: 'flex',
-      gap: '8px',
-      justifyContent: 'center',
-    }}>
+    <div style={{ display: 'flex', gap: '8px' }}>
       {[1, 2, 3, 4, 5].map((star) => (
         <button
           key={star}
-          onClick={() => handleRate(star)}
+          onClick={() => onRatingChange?.(star)}
           onMouseEnter={() => setHover(star)}
-          onMouseLeave={() => setHover(0)}
+          onMouseLeave={() => setHover(rating)}
           style={{
-            background: 'none',
-            border: 'none',
-            cursor: 'pointer',
-            fontSize: '36px',
-            transition: 'transform 150ms ease, filter 150ms ease',
-            // Only scale the specific hovered/selected star, not the previous ones
-            transform: star === active ? 'scale(1.3)' : star < active ? 'scale(1.1)' : 'scale(1)',
-            filter: star <= active ? 'none' : 'grayscale(1) opacity(0.3)',
+            background: 'none', border: 'none', padding: 0,
+            fontSize: '32px', cursor: 'pointer',
+            transition: 'transform 200ms ease',
+            transform: (hover || rating) >= star ? 'scale(1.1)' : 'scale(1)',
+            filter: (hover || rating) >= star ? 'drop-shadow(0 0 8px rgba(255,165,2,0.5))' : 'none'
           }}
         >
-          ⭐
+          {(hover || rating) >= star ? '⭐' : '☆'}
         </button>
       ))}
     </div>

@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useApp, APP_STATES } from '../context/AppContext';
+import { getVehicleImage } from '../data/mockData';
 import StatusBar from '../components/StatusBar';
 
 const STEPS = {
@@ -15,32 +16,22 @@ export default function PreDrive() {
   const [isScanning, setIsScanning] = useState(false);
   const [scanProgress, setScanProgress] = useState(0);
 
-  // Auto-transition from approaching
+  const vehicleImg = getVehicleImage(selectedVehicle?.model);
+
   useEffect(() => {
     if (step === STEPS.APPROACHING) {
-      const timer = setTimeout(() => {
-        setStep(STEPS.DAMAGE_CHECK);
-      }, 2000);
+      const timer = setTimeout(() => setStep(STEPS.DAMAGE_CHECK), 2500);
       return () => clearTimeout(timer);
     }
   }, [step]);
 
   const handleNoDamage = () => {
-    showToast('Hasar kontrolü tamamlandı ✅', 'success');
+    showToast('Hasar kontrolü tamamlandı', 'success');
     setStep(STEPS.QR_SCAN);
   };
 
-  const [showDamageForm, setShowDamageForm] = useState(false);
-  const [damagePhotoTaken, setDamagePhotoTaken] = useState(false);
-  const [damageNote, setDamageNote] = useState('');
-
   const handleReportDamage = () => {
-    setShowDamageForm(true);
-  };
-
-  const handleSubmitDamage = () => {
-    showToast('Hasar raporu gönderildi. Destek ekibi bilgilendirildi. 📋', 'success');
-    setShowDamageForm(false);
+    showToast('Hasar raporu oluşturuldu. Destek ekibi bilgilendirildi.', 'info');
     setStep(STEPS.QR_SCAN);
   };
 
@@ -54,52 +45,78 @@ export default function PreDrive() {
         clearInterval(interval);
         setIsScanning(false);
         setStep(STEPS.UNLOCKED);
-        showToast('Kapılar açıldı! 🔓', 'success');
+        showToast('Kapılar açıldı!', 'success');
       }
-    }, 100);
+    }, 80);
   };
 
-  const handleStartDrive = () => {
-    startDrive();
-  };
-
-  // APPROACHING step
+  // APPROACHING
   if (step === STEPS.APPROACHING) {
     return (
-      <div className="screen" style={{ background: 'var(--gradient-dark)' }}>
+      <div className="screen" style={{
+        background: 'var(--togg-navy)',
+        justifyContent: 'center',
+        alignItems: 'center',
+        textAlign: 'center',
+        padding: 'var(--space-lg)',
+      }}>
         <StatusBar />
-        <div className="animate-fadeInUp" style={{
-          flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
-          padding: '24px', textAlign: 'center',
-        }}>
-          {/* Animated Car Icon */}
+
+        <div className="animate-fadeInUp" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '24px' }}>
+          {/* Vehicle with pulse ring */}
+          <div style={{ position: 'relative' }}>
+            <div style={{
+              position: 'absolute',
+              inset: '-20px',
+              borderRadius: '50%',
+              border: '2px solid rgba(0,212,170,0.2)',
+              animation: 'pulseGlow 2s ease-in-out infinite',
+            }} />
+            <div style={{
+              width: '180px',
+              height: '120px',
+              borderRadius: '20px',
+              overflow: 'hidden',
+              background: 'linear-gradient(135deg, rgba(0,212,170,0.08), rgba(79,172,254,0.05))',
+              border: '1px solid rgba(255,255,255,0.06)',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+            }}>
+              <img src={vehicleImg} alt={selectedVehicle?.model} style={{
+                width: '100%',
+                height: '100%',
+                objectFit: 'cover',
+                filter: 'drop-shadow(0 10px 20px rgba(0,0,0,0.3))',
+              }} />
+            </div>
+          </div>
+
+          <div>
+            <h2 style={{ fontSize: '22px', fontWeight: 800, marginBottom: '6px' }}>
+              Araca Yaklaşıyorsunuz
+            </h2>
+            <p style={{ color: 'var(--togg-gray-400)', fontSize: '14px' }}>
+              {selectedVehicle?.model || 'TOGG T10X'} · {selectedVehicle?.plate || '34 TG 1001'}
+            </p>
+          </div>
+
           <div style={{
-            width: '120px', height: '120px', borderRadius: '50%',
-            background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.1)',
-            display: 'flex', alignItems: 'center', justifyContent: 'center',
-            fontSize: '56px', position: 'relative', marginBottom: '32px',
+            display: 'flex',
+            alignItems: 'center',
+            gap: '8px',
+            color: 'var(--togg-teal)',
+            fontSize: '13px',
+            fontWeight: 600,
+            background: 'rgba(0,212,170,0.08)',
+            padding: '8px 16px',
+            borderRadius: '20px',
           }}>
             <div style={{
-              position: 'absolute', inset: '-4px', borderRadius: '50%',
-              border: '3px solid transparent', borderTopColor: '#00d4aa',
-              animation: 'spin 1.5s linear infinite',
+              width: '8px', height: '8px', borderRadius: '50%',
+              background: 'var(--togg-teal)',
+              animation: 'pulse 1.5s ease-in-out infinite',
             }} />
-            🚘
-          </div>
-          
-          <h2 style={{ fontSize: '24px', fontWeight: 800, marginBottom: '8px', letterSpacing: '-0.5px' }}>
-            Araca Yaklaşıyorsunuz
-          </h2>
-          <p style={{ color: 'var(--togg-gray-400)', fontSize: '15px', marginBottom: '16px' }}>
-            {selectedVehicle?.plate || '34 TG 1001'}
-          </p>
-          
-          <div style={{
-            display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px',
-            color: '#00d4aa', fontSize: '14px', fontWeight: 700,
-            background: 'rgba(0,212,170,0.1)', padding: '8px 16px', borderRadius: '20px',
-          }}>
-            <div className="animate-pulse" style={{ width: '8px', height: '8px', borderRadius: '50%', background: '#00d4aa' }} />
             Konum doğrulanıyor...
           </div>
         </div>
@@ -107,280 +124,129 @@ export default function PreDrive() {
     );
   }
 
-  // DAMAGE CHECK step
+  // DAMAGE CHECK
   if (step === STEPS.DAMAGE_CHECK) {
     return (
-      <div className="screen" style={{ background: 'var(--gradient-dark)' }}>
+      <div className="screen" style={{ background: 'var(--togg-navy)' }}>
         <StatusBar />
-        <div style={{ padding: 'var(--space-lg)' }}>
-          <button
-            onClick={() => navigateTo(APP_STATES.MAP)}
-            style={{
-              background: 'var(--glass-bg)',
-              border: '1px solid var(--glass-border)',
-              borderRadius: 'var(--radius-md)',
-              width: '40px',
-              height: '40px',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              color: 'var(--togg-white)',
-              fontSize: '18px',
-              backdropFilter: 'blur(10px)',
-            }}
-          >
-            ←
-          </button>
+        <div style={{ padding: '0 20px 20px' }}>
+          <button onClick={() => navigateTo(APP_STATES.MAP)} style={{
+            background: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.08)',
+            borderRadius: '12px', width: '40px', height: '40px', display: 'flex',
+            alignItems: 'center', justifyContent: 'center', color: '#fff', fontSize: '18px', cursor: 'pointer',
+          }}>←</button>
         </div>
 
-        <div style={{ flex: 1, padding: '24px', display: 'flex', flexDirection: 'column' }}>
+        <div style={{ flex: 1, display: 'flex', flexDirection: 'column', padding: '0 20px' }}>
           <div className="animate-fadeInUp">
-            {/* Header Icon */}
+            {/* Vehicle preview with image */}
             <div style={{
-              width: '56px', height: '56px', borderRadius: '16px',
-              background: 'rgba(255, 165, 2, 0.1)', border: '1px solid rgba(255, 165, 2, 0.2)',
-              display: 'flex', alignItems: 'center', justifyContent: 'center',
-              fontSize: '24px', marginBottom: '20px',
+              borderRadius: '20px',
+              overflow: 'hidden',
+              background: 'linear-gradient(135deg, rgba(255,165,2,0.08), rgba(255,165,2,0.03))',
+              border: '1px solid rgba(255,165,2,0.15)',
+              marginBottom: '24px',
             }}>
-              🔍
+              <div style={{ height: '160px', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '16px' }}>
+                <img src={vehicleImg} alt={selectedVehicle?.model} style={{
+                  height: '100%', objectFit: 'contain',
+                  filter: 'drop-shadow(0 10px 20px rgba(0,0,0,0.3))',
+                }} />
+              </div>
+              <div style={{ padding: '0 16px 14px', display: 'flex', alignItems: 'center', gap: '10px' }}>
+                <div>
+                  <h3 style={{ fontWeight: 700, fontSize: '15px' }}>{selectedVehicle?.model || 'TOGG T10X'}</h3>
+                  <p style={{ color: 'var(--togg-gray-400)', fontSize: '12px' }}>
+                    {selectedVehicle?.plate || '34 TG 1001'} · {selectedVehicle?.color || 'Anadolu Mavisi'}
+                  </p>
+                </div>
+              </div>
             </div>
 
-            <h1 style={{ fontSize: '28px', fontWeight: 900, marginBottom: '8px', letterSpacing: '-0.5px' }}>
+            <h1 style={{ fontSize: '24px', fontWeight: 800, marginBottom: '8px' }}>
               Hasar Kontrolü
             </h1>
-            <p style={{
-              color: 'var(--togg-gray-400)', fontSize: '15px',
-              marginBottom: '32px', lineHeight: 1.6,
-            }}>
+            <p style={{ color: 'var(--togg-gray-300)', fontSize: '14px', marginBottom: '32px', lineHeight: 1.6 }}>
               Araçta daha önce mevcut olmayan yeni bir hasar görüyor musunuz?
             </p>
-
-            {/* Vehicle preview card */}
-            <div className="card-premium" style={{
-              padding: '16px', display: 'flex', alignItems: 'center', gap: '16px',
-              marginBottom: '32px',
-            }}>
-              <div style={{
-                width: '60px', height: '60px', borderRadius: '14px',
-                background: 'rgba(255,255,255,0.06)', display: 'flex', alignItems: 'center', justifyContent: 'center',
-                fontSize: '28px', border: '1px solid rgba(255,255,255,0.05)',
-              }}>
-                🚘
-              </div>
-              <div>
-                <h3 style={{ fontWeight: 800, fontSize: '18px', color: '#fff', marginBottom: '2px' }}>
-                  {selectedVehicle?.model || 'TOGG T10X'}
-                </h3>
-                <p style={{ color: 'var(--togg-gray-400)', fontSize: '13px' }}>
-                  {selectedVehicle?.plate || '34 TG 1001'} • {selectedVehicle?.color || 'Anadolu Mavisi'}
-                </p>
-              </div>
-            </div>
           </div>
         </div>
 
-        {/* Action buttons */}
-        <div style={{ padding: '16px 24px 40px', display: 'flex', flexDirection: 'column', gap: '12px' }}>
-          {!showDamageForm ? (
-            <>
-              <button
-                className="btn btn-primary btn-full"
-                onClick={handleNoDamage}
-                style={{ fontSize: '16px', padding: '18px' }}
-              >
-                ✅ Her Şey Yolunda
-              </button>
-              <button
-                className="btn btn-secondary btn-full"
-                onClick={handleReportDamage}
-                style={{ fontSize: '16px', padding: '18px', background: 'transparent' }}
-              >
-                📷 Hasar Bildir
-              </button>
-            </>
-          ) : (
-            <div className="animate-fadeInUp" style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
-              {/* Photo area */}
-              <button
-                onClick={() => setDamagePhotoTaken(true)}
-                style={{
-                  width: '100%', height: '140px', borderRadius: '16px',
-                  border: `2px dashed ${damagePhotoTaken ? 'rgba(46,213,115,0.5)' : 'rgba(255,255,255,0.1)'}`,
-                  background: damagePhotoTaken ? 'rgba(46,213,115,0.08)' : 'rgba(255,255,255,0.03)',
-                  color: damagePhotoTaken ? '#2ed573' : 'var(--togg-gray-400)',
-                  display: 'flex', flexDirection: 'column',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  gap: '8px',
-                  fontSize: 'var(--font-sm)',
-                  fontWeight: 600,
-                  cursor: 'pointer',
-                  transition: 'all var(--transition-base)',
-                }}
-              >
-                {damagePhotoTaken ? (
-                  <>
-                    <span style={{ fontSize: '28px' }}>✅</span>
-                    <span>Fotoğraf çekildi</span>
-                  </>
-                ) : (
-                  <>
-                    <span style={{ fontSize: '28px' }}>📸</span>
-                    <span>Hasarın fotoğrafını çekin</span>
-                  </>
-                )}
-              </button>
-
-              {/* Note */}
-              <textarea
-                value={damageNote}
-                onChange={(e) => setDamageNote(e.target.value)}
-                placeholder="Hasarı açıklayın (isteğe bağlı)..."
-                rows={3}
-                style={{
-                  width: '100%',
-                  padding: '12px 16px',
-                  borderRadius: 'var(--radius-md)',
-                  background: 'var(--togg-navy-mid)',
-                  border: '2px solid transparent',
-                  color: 'var(--togg-white)',
-                  fontSize: 'var(--font-sm)',
-                  fontFamily: 'var(--font-family)',
-                  resize: 'none',
-                  outline: 'none',
-                  transition: 'border-color var(--transition-fast)',
-                }}
-                onFocus={(e) => e.target.style.borderColor = 'var(--togg-teal)'}
-                onBlur={(e) => e.target.style.borderColor = 'transparent'}
-              />
-
-              {/* Buttons */}
-              <button
-                className="btn btn-primary btn-full"
-                onClick={handleSubmitDamage}
-                disabled={!damagePhotoTaken}
-                style={{
-                  opacity: damagePhotoTaken ? 1 : 0.5,
-                  cursor: damagePhotoTaken ? 'pointer' : 'not-allowed',
-                }}
-              >
-                📋 Hasar Raporunu Gönder
-              </button>
-              <button
-                className="btn btn-secondary btn-full"
-                onClick={() => setShowDamageForm(false)}
-                style={{ fontSize: 'var(--font-sm)' }}
-              >
-                ← Geri Dön
-              </button>
-            </div>
-          )}
+        <div style={{ padding: '0 20px 40px', display: 'flex', flexDirection: 'column', gap: '10px' }}>
+          <button className="btn btn-primary btn-lg btn-full" onClick={handleNoDamage}
+            style={{ borderRadius: '16px', fontWeight: 800 }}>
+            Her Şey Yolunda
+          </button>
+          <button className="btn btn-full" onClick={handleReportDamage} style={{
+            background: 'rgba(255,165,2,0.1)', border: '1px solid rgba(255,165,2,0.2)',
+            borderRadius: '16px', padding: '16px', color: '#ffa502', fontWeight: 700,
+            display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', fontSize: '15px',
+          }}>
+            📷 Hasar Bildir
+          </button>
         </div>
       </div>
     );
   }
 
-  // QR SCAN step
+  // QR SCAN
   if (step === STEPS.QR_SCAN) {
     return (
       <div className="screen" style={{
-        background: 'var(--gradient-dark)',
+        background: 'var(--togg-navy)',
         justifyContent: 'center',
         alignItems: 'center',
         textAlign: 'center',
         padding: 'var(--space-lg)',
       }}>
         <StatusBar />
-        
-        <div className="animate-fadeInUp" style={{
-          display: 'flex',
-          flexDirection: 'column',
-          alignItems: 'center',
-          gap: 'var(--space-xl)',
-        }}>
-          <h1 style={{ fontSize: '28px', fontWeight: 900, marginBottom: '8px', letterSpacing: '-0.5px' }}>
-            QR Kodu Okutun
-          </h1>
-          <p style={{
-            color: 'var(--togg-gray-400)', fontSize: '15px',
-            marginBottom: '32px', lineHeight: 1.6,
-          }}>
+
+        <div className="animate-fadeInUp" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '28px' }}>
+          <h1 style={{ fontSize: '24px', fontWeight: 800 }}>QR Kodu Okutun</h1>
+          <p style={{ color: 'var(--togg-gray-300)', fontSize: '14px', maxWidth: '280px', lineHeight: 1.6 }}>
             Kapı kolunun yanındaki QR kodu okutarak kilidi açın
           </p>
 
-          {/* QR Scanner area */}
           <button
             onClick={handleScanQR}
             disabled={isScanning}
             style={{
-              width: '200px',
-              height: '200px',
-              borderRadius: '24px',
-              background: isScanning ? 'rgba(0,212,170,0.1)' : 'var(--glass-bg)',
-              border: `3px solid ${isScanning ? 'var(--togg-teal)' : 'var(--glass-border)'}`,
-              display: 'flex',
-              flexDirection: 'column',
-              alignItems: 'center',
-              justifyContent: 'center',
-              gap: 'var(--space-md)',
-              cursor: isScanning ? 'default' : 'pointer',
-              position: 'relative',
-              overflow: 'hidden',
-              transition: 'all var(--transition-base)',
-              color: 'var(--togg-white)',
+              width: '200px', height: '200px', borderRadius: '28px',
+              background: isScanning ? 'rgba(0,212,170,0.06)' : 'rgba(255,255,255,0.04)',
+              border: `3px solid ${isScanning ? 'var(--togg-teal)' : 'rgba(255,255,255,0.08)'}`,
+              display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
+              gap: '12px', cursor: isScanning ? 'default' : 'pointer', position: 'relative', overflow: 'hidden',
+              transition: 'all 300ms ease', color: '#fff',
             }}
           >
             {isScanning && (
               <>
                 <div style={{
-                  position: 'absolute',
-                  inset: '-4px',
-                  borderRadius: '28px',
-                  border: '3px solid transparent',
-                  borderTopColor: 'var(--togg-teal)',
+                  position: 'absolute', inset: '-4px', borderRadius: '32px',
+                  border: '3px solid transparent', borderTopColor: 'var(--togg-teal)',
                   animation: 'spin 1s linear infinite',
                 }} />
-                {/* Scan line */}
                 <div style={{
-                  position: 'absolute',
-                  left: '10%',
-                  right: '10%',
-                  height: '2px',
-                  background: 'var(--togg-teal)',
-                  boxShadow: '0 0 10px var(--togg-teal)',
-                  top: `${scanProgress}%`,
-                  transition: 'top 100ms linear',
+                  position: 'absolute', left: '10%', right: '10%', height: '3px',
+                  background: 'linear-gradient(90deg, transparent, var(--togg-teal), transparent)',
+                  boxShadow: '0 0 15px var(--togg-teal)',
+                  top: `${scanProgress}%`, transition: 'top 80ms linear',
                 }} />
               </>
             )}
-            
-            <span style={{ fontSize: '56px', zIndex: 1 }}>
-              {isScanning ? '📡' : '📱'}
-            </span>
-            <span style={{
-              fontSize: 'var(--font-sm)',
-              fontWeight: 600,
-              color: isScanning ? 'var(--togg-teal)' : 'var(--togg-gray-300)',
-              zIndex: 1,
-            }}>
+            <div style={{ fontSize: '60px', zIndex: 1 }}>{isScanning ? '📡' : '📱'}</div>
+            <span style={{ fontSize: '13px', fontWeight: 600, color: isScanning ? 'var(--togg-teal)' : 'var(--togg-gray-300)', zIndex: 1 }}>
               {isScanning ? `Taranıyor... ${scanProgress}%` : 'Dokunarak Tara'}
             </span>
           </button>
 
-          {/* Instructions */}
-          <div className="glass-card" style={{
-            padding: 'var(--space-md)',
-            maxWidth: '300px',
-            display: 'flex',
-            alignItems: 'center',
-            gap: 'var(--space-sm)',
+          <div style={{
+            background: 'rgba(255,255,255,0.04)', borderRadius: '14px', padding: '14px',
+            maxWidth: '300px', display: 'flex', alignItems: 'center', gap: '10px',
+            border: '1px solid rgba(255,255,255,0.06)',
           }}>
-            <span style={{ fontSize: '20px' }}>💡</span>
-            <p style={{
-              fontSize: 'var(--font-xs)',
-              color: 'var(--togg-gray-400)',
-              lineHeight: 1.5,
-            }}>
+            <div style={{ fontSize: '18px', flexShrink: 0 }}>💡</div>
+            <p style={{ fontSize: '12px', color: 'var(--togg-gray-400)', lineHeight: 1.5 }}>
               QR kod genellikle sürücü tarafı kapı kolunun hemen yanında bulunur
             </p>
           </div>
@@ -389,89 +255,74 @@ export default function PreDrive() {
     );
   }
 
-  // UNLOCKED step
+  // UNLOCKED
   return (
     <div className="screen" style={{
-      background: 'var(--gradient-dark)',
+      background: 'var(--togg-navy)',
       justifyContent: 'center',
       alignItems: 'center',
       textAlign: 'center',
       padding: 'var(--space-lg)',
     }}>
       <StatusBar />
-      
-      <div className="animate-fadeInUp" style={{
-        display: 'flex',
-        flexDirection: 'column',
-        alignItems: 'center',
-        gap: 'var(--space-xl)',
-      }}>
-        {/* Success animation */}
-        <div style={{
-          width: '120px', height: '120px', borderRadius: '50%',
-          background: 'rgba(0, 212, 170, 0.1)', border: '1px solid rgba(0, 212, 170, 0.2)',
-          display: 'flex', alignItems: 'center', justifyContent: 'center',
-          fontSize: '56px', animation: 'pulseGlow 2s ease-in-out infinite',
-          marginBottom: '16px',
-        }}>
-          🔓
+
+      <div className="animate-fadeInUp" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '24px' }}>
+        {/* Vehicle with success glow */}
+        <div style={{ position: 'relative' }}>
+          <div style={{
+            position: 'absolute', inset: '-16px', borderRadius: '30px',
+            background: 'rgba(0,212,170,0.08)',
+            animation: 'pulseGlow 2s ease-in-out infinite',
+          }} />
+          <div style={{
+            width: '200px', height: '130px', borderRadius: '22px', overflow: 'hidden',
+            background: 'linear-gradient(135deg, rgba(46,213,115,0.1), rgba(0,212,170,0.06))',
+            border: '2px solid rgba(46,213,115,0.25)',
+            display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '12px',
+          }}>
+            <img src={vehicleImg} alt={selectedVehicle?.model} style={{
+              height: '100%', objectFit: 'contain',
+              filter: 'drop-shadow(0 8px 16px rgba(0,0,0,0.3))',
+            }} />
+          </div>
         </div>
 
         <div>
-          <h1 style={{ fontSize: '32px', fontWeight: 900, color: '#2ed573', marginBottom: '8px', letterSpacing: '-0.5px' }}>
+          <h1 style={{ fontSize: '26px', fontWeight: 900, color: 'var(--togg-green)', marginBottom: '6px' }}>
             Kapılar Açıldı!
           </h1>
-          <p style={{
-            color: 'var(--togg-gray-400)', fontSize: '16px',
-            lineHeight: 1.6,
-          }}>
+          <p style={{ color: 'var(--togg-gray-300)', fontSize: '14px', maxWidth: '280px', lineHeight: 1.6 }}>
             Arabanın içindeki <strong style={{ color: '#fff' }}>Start/Stop</strong> tuşuna basarak motoru çalıştırın
           </p>
         </div>
 
-        {/* Steps list */}
-        <div style={{
-          display: 'flex',
-          flexDirection: 'column',
-          gap: 'var(--space-md)',
-          width: '100%',
-          maxWidth: '320px',
-        }}>
+        {/* Steps */}
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', width: '100%', maxWidth: '320px' }}>
           {[
             { num: 1, text: 'Araca binin', done: true },
             { num: 2, text: 'Emniyet kemerinizi takın', done: false },
             { num: 3, text: 'Start/Stop tuşuna basın', done: false },
           ].map((s) => (
-            <div
-              key={s.num}
-              className="glass-card"
-              style={{
-                padding: 'var(--space-md)',
-                display: 'flex',
-                alignItems: 'center',
-                gap: 'var(--space-md)',
-              }}
-            >
+            <div key={s.num} style={{
+              background: 'rgba(255,255,255,0.04)',
+              borderRadius: '14px',
+              padding: '14px 16px',
+              display: 'flex',
+              alignItems: 'center',
+              gap: '12px',
+              border: '1px solid rgba(255,255,255,0.04)',
+            }}>
               <div style={{
-                width: '32px',
-                height: '32px',
-                borderRadius: '50%',
-                background: s.done ? 'var(--togg-teal)' : 'var(--togg-navy-mid)',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                fontSize: 'var(--font-sm)',
-                fontWeight: 700,
+                width: '30px', height: '30px', borderRadius: '50%',
+                background: s.done ? 'var(--togg-teal)' : 'rgba(255,255,255,0.06)',
+                display: 'flex', alignItems: 'center', justifyContent: 'center',
+                fontSize: '12px', fontWeight: 700,
                 color: s.done ? 'var(--togg-navy)' : 'var(--togg-gray-400)',
                 flexShrink: 0,
               }}>
                 {s.done ? '✓' : s.num}
               </div>
-              <span style={{
-                fontSize: 'var(--font-sm)',
-                fontWeight: 500,
-                color: s.done ? 'var(--togg-gray-300)' : 'var(--togg-white)',
-              }}>
+              <span style={{ fontSize: '14px', fontWeight: 500, color: s.done ? 'var(--togg-gray-300)' : '#fff' }}>
                 {s.text}
               </span>
             </div>
@@ -480,13 +331,13 @@ export default function PreDrive() {
 
         <button
           className="btn btn-primary btn-lg btn-full"
-          onClick={handleStartDrive}
+          onClick={() => startDrive()}
           style={{
-            maxWidth: '320px',
-            animation: 'pulseGlow 2s ease-in-out infinite',
+            maxWidth: '320px', borderRadius: '16px', fontWeight: 800, fontSize: '16px',
+            boxShadow: '0 8px 32px rgba(0,212,170,0.3)',
           }}
         >
-          🚀 Sürüşe Başla
+          Sürüşe Başla
         </button>
       </div>
     </div>

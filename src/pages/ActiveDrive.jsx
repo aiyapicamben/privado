@@ -1,244 +1,241 @@
 import { useState, useEffect, useRef } from 'react';
 import { useApp, APP_STATES } from '../context/AppContext';
+import { getVehicleImage } from '../data/mockData';
 import StatusBar from '../components/StatusBar';
 import SwipeButton from '../components/SwipeButton';
 
 export default function ActiveDrive() {
-  const { selectedVehicle, setDriveState, showToast, navigateTo } = useApp();
+  const { navigateTo, selectedVehicle, driveState, setDriveState, showToast, sendTelemetryCommand } = useApp();
   const [elapsed, setElapsed] = useState(0);
   const [cost, setCost] = useState(0);
   const [isPaused, setIsPaused] = useState(false);
-  const [drivingSecs, setDrivingSecs] = useState(0);
-  const [waitingSecs, setWaitingSecs] = useState(0);
-  const isPausedRef = useRef(false);
-  const intervalRef = useRef(null);
+  const [acOn, setAcOn] = useState(false);
+  const [lightsOn, setLightsOn] = useState(false);
+  const [trunkOpen, setTrunkOpen] = useState(false);
+  const [isCommandLoading, setIsCommandLoading] = useState(false);
 
+  const vehicleImg = getVehicleImage(selectedVehicle?.model);
   const drivingRate = selectedVehicle?.pricing?.driving || 10;
   const waitingRate = selectedVehicle?.pricing?.waiting || 2;
 
   useEffect(() => {
-    intervalRef.current = setInterval(() => {
+    const interval = setInterval(() => {
       setElapsed(prev => prev + 1);
-      if (isPausedRef.current) {
-        setWaitingSecs(prev => prev + 1);
-      } else {
-        setDrivingSecs(prev => prev + 1);
-      }
-      setCost(prev => {
-        const rate = isPausedRef.current ? waitingRate : drivingRate;
-        return prev + rate / 60;
-      });
+      setCost(prev => prev + (isPaused ? waitingRate : drivingRate) / 60);
     }, 1000);
-    return () => clearInterval(intervalRef.current);
-  }, [drivingRate, waitingRate]);
+    return () => clearInterval(interval);
+  }, [isPaused, drivingRate, waitingRate]);
 
-  const fmt = (s) => {
-    const h = Math.floor(s / 3600);
-    const m = Math.floor((s % 3600) / 60);
-    const sec = s % 60;
-    const mm = String(m).padStart(2, '0');
-    const ss = String(sec).padStart(2, '0');
-    return h > 0 ? `${String(h).padStart(2,'0')}:${mm}:${ss}` : `${mm}:${ss}`;
+  const formatTime = (seconds) => {
+    const hrs = Math.floor(seconds / 3600);
+    const mins = Math.floor((seconds % 3600) / 60);
+    const secs = seconds % 60;
+    if (hrs > 0) return `${hrs.toString().padStart(2, '0')}:${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+    return `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
   };
 
-  const handlePause = () => {
-    const next = !isPaused;
-    setIsPaused(next);
-    isPausedRef.current = next;
-    showToast(
-      next ? 'Bekleme modu aktif — Kapılar kilitlendi 🔒' : 'Sürüş devam ediyor — Kapılar açıldı 🔓',
-      next ? 'info' : 'success'
-    );
+  const handlePause = async () => {
+    if (isCommandLoading) return;
+    setIsCommandLoading(true);
+    showToast(isPaused ? 'Kapılar açılıyor, lütfen bekleyin...' : 'Kapılar kilitleniyor...', 'info');
+    
+    await sendTelemetryCommand(selectedVehicle?.id || 1, isPaused ? 'UNLOCK_DOORS' : 'LOCK_DOORS');
+    
+    setIsPaused(!isPaused);
+    setIsCommandLoading(false);
+    showToast(isPaused ? 'Sürüş devam ediyor · Kapılar açıldı' : 'Bekleme modu · Kapılar kilitlendi', 'success');
   };
 
   const handleEndDrive = () => {
-    setDriveState(prev => ({
-      ...prev,
-      isActive: false,
-      elapsedSeconds: elapsed,
-      totalCostTL: cost,
-      drivingSeconds: drivingSecs,
-      waitingSeconds: waitingSecs,
-    }));
+    setDriveState(prev => ({ ...prev, isActive: false, elapsedSeconds: elapsed, totalCostTL: cost }));
     navigateTo(APP_STATES.END_DRIVE);
   };
-
-  const teal = '#00d4aa';
-  const orange = '#ffa502';
-  const accent = isPaused ? orange : teal;
-
-  // Split timer digits for individual rendering
-  const timeStr = fmt(elapsed);
 
   return (
     <div className="screen" style={{
       background: isPaused
-        ? 'linear-gradient(180deg, #0d0d22 0%, #0a0f1e 100%)'
-        : 'var(--gradient-dark)',
+        ? 'linear-gradient(180deg, #1a1530 0%, #0a0f1e 100%)'
+        : 'var(--togg-navy)',
       transition: 'background 600ms ease',
     }}>
       <StatusBar />
 
-      {/* Mode pill */}
-      <div style={{ textAlign: 'center', padding: '6px 0 0' }}>
-        <div style={{
-          display: 'inline-flex', alignItems: 'center', gap: '8px',
-          padding: '7px 20px', borderRadius: 'var(--radius-full)',
-          background: isPaused ? 'rgba(255,165,2,0.1)' : 'rgba(0,212,170,0.1)',
-          border: `1px solid ${isPaused ? 'rgba(255,165,2,0.3)' : 'rgba(0,212,170,0.3)'}`,
+      {/* Mode badge */}
+      <div style={{ textAlign: 'center', padding: '4px 0 12px' }}>
+        <span style={{
+          background: isPaused ? 'rgba(255,165,2,0.12)' : 'rgba(46,213,115,0.1)',
+          color: isPaused ? '#ffa502' : '#2ed573',
+          padding: '6px 16px',
+          borderRadius: '20px',
+          fontSize: '12px',
+          fontWeight: 700,
+          border: `1px solid ${isPaused ? 'rgba(255,165,2,0.2)' : 'rgba(46,213,115,0.15)'}`,
+          display: 'inline-flex',
+          alignItems: 'center',
+          gap: '6px',
         }}>
           <div style={{
-            width: '7px', height: '7px', borderRadius: '50%',
-            background: accent, boxShadow: `0 0 8px ${accent}`,
-            animation: 'pulse 1.8s ease-in-out infinite',
+            width: '6px', height: '6px', borderRadius: '50%',
+            background: isPaused ? '#ffa502' : '#2ed573',
+            boxShadow: `0 0 8px ${isPaused ? '#ffa502' : '#2ed573'}`,
           }} />
-          <span style={{ fontSize: 'var(--font-sm)', fontWeight: 700, color: accent, letterSpacing: '0.5px' }}>
-            {isPaused ? 'Bekleme Modu' : 'Sürüş Aktif'}
-          </span>
-        </div>
+          {isPaused ? 'Bekleme Modu' : 'Sürüş Aktif'}
+        </span>
       </div>
 
-      {/* Main content */}
       <div style={{
-        flex: 1, display: 'flex', flexDirection: 'column',
-        alignItems: 'center', justifyContent: 'center',
-        padding: '0 24px', gap: '20px',
+        flex: 1,
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center',
+        justifyContent: 'center',
+        padding: '0 20px',
       }}>
-
-        {/* Timer — plain color, no gradient-clip trick */}
-        <div style={{ textAlign: 'center' }}>
-          <p style={{
-            fontSize: '10px', fontWeight: 700, color: 'var(--togg-gray-400)',
-            letterSpacing: '3px', textTransform: 'uppercase', marginBottom: '12px',
-          }}>
-            GEÇEN SÜRE
-          </p>
-          <div style={{
-            display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '2px',
-          }}>
-            {timeStr.split('').map((ch, i) => (
-              <span key={i} style={{
-                display: 'inline-block',
-                width: ch === ':' ? '20px' : '38px',
-                fontSize: ch === ':' ? '48px' : 'clamp(52px, 14vw, 68px)',
-                fontWeight: 900,
-                fontVariantNumeric: 'tabular-nums',
-                textAlign: 'center',
-                lineHeight: 1,
-                color: accent,
-                transition: 'color 400ms ease',
-                ...(ch !== ':' ? {
-                  background: 'rgba(255,255,255,0.04)',
-                  borderRadius: '12px',
-                  padding: '8px 0',
-                } : {
-                  opacity: 0.4,
-                }),
-              }}>
-                {ch}
-              </span>
-            ))}
-          </div>
-        </div>
-
-        {/* Cost card */}
+        {/* Vehicle image */}
         <div style={{
-          width: '100%', maxWidth: '310px', borderRadius: '20px',
-          background: 'rgba(255,255,255,0.05)',
-          border: `1px solid ${isPaused ? 'rgba(255,165,2,0.15)' : 'rgba(0,212,170,0.15)'}`,
-          backdropFilter: 'blur(20px)', padding: '22px 0',
-          display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '6px',
-          position: 'relative', overflow: 'hidden',
-          transition: 'border-color 400ms ease',
+          width: '140px',
+          height: '90px',
+          borderRadius: '16px',
+          overflow: 'hidden',
+          marginBottom: '8px',
+          background: 'rgba(255,255,255,0.03)',
+          border: '1px solid rgba(255,255,255,0.04)',
         }}>
-          {/* Top accent line */}
-          <div style={{
-            position: 'absolute', top: 0, left: '15%', right: '15%', height: '2px',
-            borderRadius: '99px',
-            background: `linear-gradient(90deg, transparent, ${accent}, transparent)`,
-            transition: 'background 400ms ease',
+          <img src={vehicleImg} alt={selectedVehicle?.model} style={{
+            width: '100%', height: '100%', objectFit: 'cover',
+            filter: 'drop-shadow(0 8px 16px rgba(0,0,0,0.3))',
           }} />
+        </div>
 
-          <p style={{ fontSize: '10px', fontWeight: 700, letterSpacing: '2.5px', textTransform: 'uppercase', color: 'var(--togg-gray-400)' }}>
-            TOPLAM TUTAR
+        <p style={{ color: 'var(--togg-gray-400)', fontSize: '12px', marginBottom: '24px' }}>
+          {selectedVehicle?.model || 'TOGG T10X'} · {selectedVehicle?.plate || '34 TG 1001'}
+        </p>
+
+        {/* Timer */}
+        <div style={{ marginBottom: '20px', textAlign: 'center' }}>
+          <p style={{
+            color: 'var(--togg-gray-400)', fontSize: '10px', fontWeight: 600,
+            textTransform: 'uppercase', letterSpacing: '2px', marginBottom: '4px',
+          }}>
+            Geçen Süre
           </p>
-          <div style={{ display: 'flex', alignItems: 'flex-start', gap: '3px', lineHeight: 1 }}>
-            <span style={{ fontSize: '20px', fontWeight: 700, color: accent, marginTop: '10px' }}>₺</span>
-            <span style={{ fontSize: '56px', fontWeight: 900, fontVariantNumeric: 'tabular-nums', color: '#fff' }}>
-              {Math.floor(cost)}
-            </span>
-            <span style={{ fontSize: '24px', fontWeight: 700, color: 'var(--togg-gray-300)', marginTop: '10px' }}>
-              .{String(Math.round((cost % 1) * 100)).padStart(2, '0')}
-            </span>
-          </div>
-
-          <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginTop: '2px' }}>
-            <div style={{
-              width: '6px', height: '6px', borderRadius: '50%',
-              background: accent, boxShadow: `0 0 6px ${accent}`,
-            }} />
-            <span style={{ fontSize: '12px', fontWeight: 600, color: 'var(--togg-gray-400)' }}>
-              {isPaused ? `${waitingRate} ₺/dk — bekleme` : `${drivingRate} ₺/dk — sürüş`}
-            </span>
+          <div style={{
+            fontSize: '46px', fontWeight: 900, fontVariantNumeric: 'tabular-nums', letterSpacing: '2px',
+            background: isPaused ? 'linear-gradient(135deg, #ffa502, #ff6348)' : 'var(--gradient-primary)',
+            WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', lineHeight: 1,
+          }}>
+            {formatTime(elapsed)}
           </div>
         </div>
 
-        {/* Driving / Waiting stats */}
+        {/* Cost circle */}
         <div style={{
-          display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px',
-          width: '100%', maxWidth: '310px',
+          width: '180px', height: '180px', borderRadius: '50%',
+          background: 'rgba(255,255,255,0.03)',
+          border: '2px solid rgba(255,255,255,0.06)',
+          display: 'flex', flexDirection: 'column',
+          alignItems: 'center', justifyContent: 'center',
+          marginBottom: '20px', position: 'relative',
         }}>
           <div style={{
-            background: 'rgba(255,255,255,0.04)',
-            border: '1px solid rgba(46,213,115,0.15)',
-            borderRadius: '16px', padding: '14px 16px',
-          }}>
-            <p style={{ fontSize: '10px', fontWeight: 700, letterSpacing: '1.5px', textTransform: 'uppercase', color: 'var(--togg-gray-400)', marginBottom: '6px' }}>
-              🚗 Sürüş
-            </p>
-            <p style={{ fontSize: '22px', fontWeight: 800, color: '#2ed573', fontVariantNumeric: 'tabular-nums' }}>
-              {fmt(drivingSecs)}
-            </p>
+            position: 'absolute', inset: '-4px', borderRadius: '50%',
+            border: '3px solid transparent',
+            borderTopColor: isPaused ? '#ffa502' : 'var(--togg-teal)',
+            borderRightColor: isPaused ? 'rgba(255,165,2,0.2)' : 'rgba(0,212,170,0.2)',
+            animation: `spin ${isPaused ? '4s' : '2.5s'} linear infinite`,
+          }} />
+          <p style={{ fontSize: '10px', color: 'var(--togg-gray-400)', textTransform: 'uppercase', letterSpacing: '2px', marginBottom: '2px' }}>
+            Toplam Tutar
+          </p>
+          <div style={{ fontSize: '40px', fontWeight: 900, fontVariantNumeric: 'tabular-nums', color: '#fff' }}>
+            {cost.toFixed(1)}
           </div>
-          <div style={{
-            background: 'rgba(255,255,255,0.04)',
-            border: `1px solid rgba(255,165,2,0.15)`,
-            borderRadius: '16px', padding: '14px 16px',
-          }}>
-            <p style={{ fontSize: '10px', fontWeight: 700, letterSpacing: '1.5px', textTransform: 'uppercase', color: 'var(--togg-gray-400)', marginBottom: '6px' }}>
-              ⏸️ Bekleme
-            </p>
-            <p style={{ fontSize: '22px', fontWeight: 800, color: '#ffa502', fontVariantNumeric: 'tabular-nums' }}>
-              {fmt(waitingSecs)}
-            </p>
-          </div>
+          <span style={{ fontSize: '16px', fontWeight: 700, color: 'var(--togg-teal)' }}>₺</span>
         </div>
 
-        {/* Vehicle tag */}
-        <div style={{
-          display: 'inline-flex', alignItems: 'center', gap: '10px',
-          padding: '8px 18px', borderRadius: 'var(--radius-full)',
-          background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.08)',
+        {/* Smart Remote Panel */}
+        <div className="glass-card" style={{
+          width: '100%', marginBottom: '24px', padding: '16px',
+          display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '12px',
+          opacity: isCommandLoading ? 0.6 : 1, pointerEvents: isCommandLoading ? 'none' : 'auto',
+          transition: 'all 300ms ease'
         }}>
-          <span style={{ fontSize: '15px' }}>🚘</span>
-          <span style={{ fontSize: '13px', fontWeight: 600, color: 'var(--togg-gray-300)' }}>
-            {selectedVehicle?.model || 'TOGG T10X'}
-          </span>
-          <span style={{ color: 'var(--togg-gray-500)', fontSize: '10px' }}>•</span>
-          <span style={{ fontSize: '13px', fontWeight: 500, color: 'var(--togg-gray-400)' }}>
-            {selectedVehicle?.plate || '34 TG 1001'}
-          </span>
+          {/* AC Button */}
+          <button onClick={async () => {
+            setIsCommandLoading(true);
+            showToast('Klima komutu araca iletiliyor...', 'info');
+            await sendTelemetryCommand(selectedVehicle?.id || 1, acOn ? 'STOP_AC' : 'START_AC');
+            setAcOn(!acOn);
+            setIsCommandLoading(false);
+            showToast(acOn ? 'Klima kapatıldı' : 'Klima 22°C ayarında açıldı', 'success');
+          }} style={{
+            background: acOn ? 'rgba(0, 212, 170, 0.15)' : 'rgba(255,255,255,0.04)',
+            border: `1px solid ${acOn ? 'var(--togg-teal)' : 'rgba(255,255,255,0.06)'}`,
+            borderRadius: '12px', padding: '12px 8px', display: 'flex', flexDirection: 'column',
+            alignItems: 'center', gap: '8px', color: acOn ? 'var(--togg-teal)' : '#fff',
+            transition: 'all 300ms ease'
+          }}>
+            <span style={{ fontSize: '20px' }}>{acOn ? '🌬️' : '🌡️'}</span>
+            <span style={{ fontSize: '11px', fontWeight: 600 }}>Klima</span>
+          </button>
+
+          {/* Lights Button */}
+          <button onClick={async () => {
+            setIsCommandLoading(true);
+            showToast('Far komutu araca iletiliyor...', 'info');
+            await sendTelemetryCommand(selectedVehicle?.id || 1, lightsOn ? 'LIGHTS_OFF' : 'LIGHTS_ON');
+            setLightsOn(!lightsOn);
+            setIsCommandLoading(false);
+            showToast(lightsOn ? 'Farlar söndürüldü' : 'Farlar yakıldı', 'success');
+          }} style={{
+            background: lightsOn ? 'rgba(255, 165, 2, 0.15)' : 'rgba(255,255,255,0.04)',
+            border: `1px solid ${lightsOn ? '#ffa502' : 'rgba(255,255,255,0.06)'}`,
+            borderRadius: '12px', padding: '12px 8px', display: 'flex', flexDirection: 'column',
+            alignItems: 'center', gap: '8px', color: lightsOn ? '#ffa502' : '#fff',
+            transition: 'all 300ms ease'
+          }}>
+            <span style={{ fontSize: '20px' }}>💡</span>
+            <span style={{ fontSize: '11px', fontWeight: 600 }}>Farlar</span>
+          </button>
+
+          {/* Trunk Button */}
+          <button onClick={async () => {
+            setIsCommandLoading(true);
+            showToast('Bagaj komutu araca iletiliyor...', 'info');
+            await sendTelemetryCommand(selectedVehicle?.id || 1, trunkOpen ? 'CLOSE_TRUNK' : 'OPEN_TRUNK');
+            setTrunkOpen(!trunkOpen);
+            setIsCommandLoading(false);
+            showToast(trunkOpen ? 'Bagaj kapandı' : 'Bagaj açıldı', 'success');
+          }} style={{
+            background: trunkOpen ? 'rgba(79, 172, 254, 0.15)' : 'rgba(255,255,255,0.04)',
+            border: `1px solid ${trunkOpen ? '#4facfe' : 'rgba(255,255,255,0.06)'}`,
+            borderRadius: '12px', padding: '12px 8px', display: 'flex', flexDirection: 'column',
+            alignItems: 'center', gap: '8px', color: trunkOpen ? '#4facfe' : '#fff',
+            transition: 'all 300ms ease'
+          }}>
+            <span style={{ fontSize: '20px' }}>🚘</span>
+            <span style={{ fontSize: '11px', fontWeight: 600 }}>Bagaj</span>
+          </button>
         </div>
       </div>
 
       {/* Controls */}
-      <div style={{ padding: '0 24px 36px', display: 'flex', flexDirection: 'column', gap: '12px' }}>
-        <button
-          className={`btn btn-full ${isPaused ? 'btn-primary' : 'btn-secondary'}`}
-          onClick={handlePause}
-          style={{ padding: '16px', fontSize: 'var(--font-base)', fontWeight: 700 }}
-        >
-          {isPaused ? '▶️ Sürüşe Devam Et' : '⏸️ Duraklat — Bekleme Modu'}
+      <div style={{ padding: '0 20px 36px', display: 'flex', flexDirection: 'column', gap: '10px' }}>
+        <button onClick={handlePause} disabled={isCommandLoading} style={{
+          width: '100%', padding: '16px', borderRadius: '16px', fontWeight: 700, fontSize: '15px',
+          cursor: isCommandLoading ? 'not-allowed' : 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px',
+          background: isPaused ? 'linear-gradient(135deg, #00d4aa, #4facfe)' : 'rgba(255,255,255,0.06)',
+          border: isPaused ? 'none' : '1px solid rgba(255,255,255,0.08)',
+          color: isPaused ? '#0a0f1e' : '#fff',
+          boxShadow: isPaused ? '0 4px 20px rgba(0,212,170,0.3)' : 'none',
+          opacity: isCommandLoading ? 0.7 : 1,
+          transition: 'all 300ms ease',
+        }}>
+          {isCommandLoading ? (
+            <><div className="animate-spin" style={{ width: '16px', height: '16px', border: '2px solid currentColor', borderTopColor: 'transparent', borderRadius: '50%' }} /> İletişim Kuruluyor...</>
+          ) : (
+            isPaused ? '▶ Kapıları Aç & Devam Et' : '🔒 Kapıları Kilitle & Bekle'
+          )}
         </button>
         <SwipeButton onSwipe={handleEndDrive} label="Sürüşü Bitir" icon="■" />
       </div>
