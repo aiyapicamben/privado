@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import AppleEmoji from './AppleEmoji';
 
 export default function StarRating({ rating = 0, onRatingChange }) {
   const [hover, setHover] = useState(0);
@@ -19,7 +20,7 @@ export default function StarRating({ rating = 0, onRatingChange }) {
             filter: (hover || rating) >= star ? 'drop-shadow(0 0 8px rgba(255,165,2,0.5))' : 'none'
           }}
         >
-          {(hover || rating) >= star ? '⭐' : '☆'}
+          <AppleEmoji symbol={(hover || rating) >= star ? '⭐' : '🤍'} size={32} />
         </button>
       ))}
     </div>

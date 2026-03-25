@@ -179,7 +179,7 @@ export default function MapScreen() {
           padding: '12px 16px',
           display: 'flex',
           alignItems: 'center',
-          gap: '12px',
+          gap: '8px',
           border: '1px solid rgba(255,255,255,0.08)',
           boxShadow: '0 8px 32px rgba(0,0,0,0.4)',
           backdropFilter: 'blur(20px)',
@@ -235,6 +235,7 @@ export default function MapScreen() {
               color: 'var(--togg-white)',
               cursor: 'pointer',
               transition: 'all 200ms ease',
+              flexShrink: 0,
             }}
           >
             ☰
@@ -253,6 +254,7 @@ export default function MapScreen() {
               fontSize: '16px',
               cursor: 'pointer',
               transition: 'all 200ms ease',
+              flexShrink: 0,
             }}
           >
             💳
@@ -271,6 +273,7 @@ export default function MapScreen() {
               fontSize: '16px',
               cursor: 'pointer',
               transition: 'all 200ms ease',
+              flexShrink: 0,
             }}
           >
             🛠️
@@ -289,6 +292,7 @@ export default function MapScreen() {
               fontSize: '16px',
               cursor: 'pointer',
               transition: 'all 200ms ease',
+              flexShrink: 0,
             }}
           >
             ⚙️
@@ -431,8 +435,8 @@ export default function MapScreen() {
         attributionControl={false}
       >
         <TileLayer
-          url="https://tiles.stadiamaps.com/tiles/alidade_smooth_dark/{z}/{x}/{y}{r}.png"
-          attribution='&copy; <a href="https://stadiamaps.com/">Stadia Maps</a>'
+          url="https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png"
+          attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>'
         />
 
         {flyTo && <FlyTo coords={flyTo} />}

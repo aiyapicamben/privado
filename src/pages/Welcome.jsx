@@ -264,11 +264,7 @@ export default function Welcome() {
           </button>
           <button
             className="btn btn-full"
-            onClick={() => {
-              setUser(prev => ({ ...prev, isVerified: true, kycStatus: 'approved', phone: '+90 530 123 4567' }));
-              showToast('Hoş geldiniz! Giriş başarılı.', 'success');
-              navigateTo(APP_STATES.GARAGE);
-            }}
+            onClick={() => navigateTo(APP_STATES.REGISTER)}
             style={{
               background: 'rgba(255,255,255,0.05)',
               color: 'var(--togg-gray-300)',

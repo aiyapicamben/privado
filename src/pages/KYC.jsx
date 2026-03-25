@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useApp, APP_STATES } from '../context/AppContext';
 import StatusBar from '../components/StatusBar';
+import AppleEmoji from '../components/AppleEmoji';
 
 const DOC_STEPS = [
   { key: 'id_front', icon: '🪪', title: 'Kimlik Ön Yüzü', desc: 'TC Kimlik kartınızın ön yüzünü yükleyin' },
@@ -38,7 +39,7 @@ export default function KYC() {
         }, 500);
       }
       setApprovalProgress(Math.min(progress, 100));
-    }, 400);
+    }, 10);
   };
 
   // PENDING / APPROVED
@@ -63,7 +64,7 @@ export default function KYC() {
                   border: '3px solid transparent', borderTopColor: 'var(--togg-teal)',
                   animation: 'spin 1.2s linear infinite',
                 }} />
-                <div style={{ fontSize: '48px' }}>📋</div>
+                <AppleEmoji symbol="📝" size={48} />
               </div>
               <h2 style={{ fontSize: '22px', fontWeight: 800, marginBottom: '8px' }}>Belgeler Kontrol Ediliyor</h2>
               <p style={{ color: 'var(--togg-gray-400)', fontSize: '14px', marginBottom: '24px', maxWidth: '280px', lineHeight: 1.6 }}>
@@ -86,7 +87,7 @@ export default function KYC() {
                 alignItems: 'center', justifyContent: 'center',
                 margin: '0 auto 24px',
               }}>
-                <span style={{ fontSize: '56px' }}>✅</span>
+                <AppleEmoji symbol="✅" size={56} />
               </div>
               <h2 style={{ fontSize: '22px', fontWeight: 800, color: '#2ed573', marginBottom: '8px' }}>Onaylandı!</h2>
               <p style={{ color: 'var(--togg-gray-300)', fontSize: '14px' }}>Haritaya yönlendiriliyorsunuz...</p>
@@ -173,7 +174,7 @@ export default function KYC() {
                     display: 'flex', alignItems: 'center', justifyContent: 'center',
                     fontSize: '24px', flexShrink: 0,
                   }}>
-                    {isUploaded ? '✅' : step.icon}
+                    <AppleEmoji symbol={isUploaded ? '✅' : step.icon} size={24} />
                   </div>
                   <div style={{ flex: 1 }}>
                     <h3 style={{
@@ -192,7 +193,9 @@ export default function KYC() {
                       background: 'rgba(255,255,255,0.04)', display: 'flex',
                       alignItems: 'center', justifyContent: 'center', fontSize: '16px',
                       border: '1px solid rgba(255,255,255,0.06)',
-                    }}>📷</div>
+                    }}>
+                      <AppleEmoji symbol={'📷'} size={16} />
+                    </div>
                   )}
                 </div>
               );

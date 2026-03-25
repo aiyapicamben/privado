@@ -3,6 +3,7 @@ import { useApp, APP_STATES } from '../context/AppContext';
 import { getVehicleImage } from '../data/mockData';
 import StatusBar from '../components/StatusBar';
 import StarRating from '../components/StarRating';
+import AppleEmoji from '../components/AppleEmoji';
 
 const STEPS = { PARK_CHECK: 'park_check', PHOTO_PROOF: 'photo_proof', SUMMARY: 'summary' };
 
@@ -75,8 +76,8 @@ export default function EndDrive() {
             maxWidth: '320px', width: '100%', display: 'flex', alignItems: 'flex-start', gap: '10px',
             border: '1px solid rgba(255,165,2,0.15)', textAlign: 'left',
           }}>
-            <span style={{ fontSize: '18px', flexShrink: 0, lineHeight: 1 }}>⚠️</span>
-            <div>
+            <AppleEmoji symbol="⚠️" size={24} />
+            <div style={{ flex: 1 }}>
               <p style={{ fontSize: '13px', fontWeight: 700, color: '#ffa502', marginBottom: '2px' }}>Önemli Uyarı</p>
               <p style={{ fontSize: '11px', color: 'var(--togg-gray-400)', lineHeight: 1.5 }}>
                 Yasak bölgede park ederseniz ek ücret yansıtılabilir.
@@ -145,7 +146,7 @@ export default function EndDrive() {
                 </>
               ) : (
                 <>
-                  <div style={{ fontSize: '48px' }}>📷</div>
+                  <AppleEmoji symbol="📷" size={48} />
                   <span style={{ fontSize: '13px', fontWeight: 500, color: 'var(--togg-gray-400)' }}>
                     Fotoğraf çekmek için dokunun
                   </span>
@@ -176,7 +177,7 @@ export default function EndDrive() {
         alignItems: 'center', textAlign: 'center', padding: '20px',
       }}>
         <div className="animate-fadeInUp" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '20px' }}>
-          <div style={{ fontSize: '72px', animation: 'float 2s ease-in-out infinite' }}>🎉</div>
+          <div style={{ animation: 'float 2s ease-in-out infinite' }}><AppleEmoji symbol="🎉" size={72} /></div>
           <h1 style={{ fontSize: '24px', fontWeight: 800, color: '#2ed573' }}>Teşekkürler!</h1>
           <p style={{ color: 'var(--togg-gray-300)', fontSize: '14px' }}>Haritaya yönlendiriliyorsunuz...</p>
         </div>
@@ -196,9 +197,9 @@ export default function EndDrive() {
             <div style={{
               width: '64px', height: '64px', borderRadius: '50%',
               background: 'rgba(0,212,170,0.1)', display: 'flex',
-              alignItems: 'center', justifyContent: 'center', fontSize: '28px',
+              alignItems: 'center', justifyContent: 'center',
               margin: '0 auto 10px', border: '1px solid rgba(0,212,170,0.15)',
-            }}>🏁</div>
+            }}><AppleEmoji symbol="🏁" size={32} /></div>
             <h1 style={{ fontSize: '24px', fontWeight: 800 }}>Sürüş Özeti</h1>
           </div>
 
@@ -229,7 +230,9 @@ export default function EndDrive() {
                 { label: 'Bekleme Süresi', value: `${Math.ceil(totalMinutes * 0.25)} dk × ${waitingRate || 2} ₺`, icon: '⏸️' },
               ].map((row, i) => (
                 <div key={i} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                  <span style={{ color: 'var(--togg-gray-400)', fontSize: '13px' }}>{row.icon} {row.label}</span>
+                  <span style={{ color: 'var(--togg-gray-400)', fontSize: '13px', display: 'flex', gap: '6px', alignItems: 'center' }}>
+                    <AppleEmoji symbol={row.icon} size={16} /> {row.label}
+                  </span>
                   <span style={{ fontWeight: 600, fontSize: '14px' }}>{row.value}</span>
                 </div>
               ))}
@@ -254,12 +257,12 @@ export default function EndDrive() {
             border: '1px solid rgba(46,213,115,0.25)', position: 'relative', overflow: 'hidden',
             animationDelay: '100ms'
           }}>
-            <div style={{ position: 'absolute', right: '-10px', top: '-10px', fontSize: '80px', opacity: 0.1, transform: 'rotate(15deg)' }}>🌍</div>
+            <div style={{ position: 'absolute', right: '-10px', top: '-10px', opacity: 0.1, transform: 'rotate(15deg)' }}><AppleEmoji symbol="🌍" size={80} /></div>
             <div style={{ display: 'flex', alignItems: 'center', gap: '14px', marginBottom: '12px', position: 'relative', zIndex: 1 }}>
               <div style={{ 
                 width: '44px', height: '44px', borderRadius: '12px', background: 'rgba(46,213,115,0.2)',
-                display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '24px', flexShrink: 0
-              }}>🌱</div>
+                display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0
+              }}><AppleEmoji symbol="🌱" size={24} /></div>
               <div>
                 <h3 style={{ fontSize: '15px', fontWeight: 800, color: '#2ed573', marginBottom: '2px' }}>Doğa Dostu Sürüş</h3>
                 <p style={{ fontSize: '12px', color: 'var(--togg-gray-200)', lineHeight: 1.4 }}>
@@ -271,7 +274,7 @@ export default function EndDrive() {
               display: 'flex', alignItems: 'center', gap: '10px', background: 'rgba(0,0,0,0.25)', 
               padding: '10px 14px', borderRadius: '12px', border: '1px solid rgba(255,255,255,0.05)' 
             }}>
-              <span style={{ fontSize: '18px' }}>🏆</span>
+              <AppleEmoji symbol="🏆" size={18} />
               <span style={{ fontSize: '12px', fontWeight: 600, color: 'var(--togg-white)' }}>
                 Kazanılan Rozet: <span style={{ color: '#00d4aa' }}>Sıfır Emisyon Elçisi</span>
               </span>
@@ -288,7 +291,7 @@ export default function EndDrive() {
             {user.balance >= totalCost ? (
               <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                  <div style={{ width: '32px', height: '32px', borderRadius: '8px', background: 'rgba(0,212,170,0.1)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '16px' }}>💰</div>
+                  <div style={{ width: '32px', height: '32px', borderRadius: '8px', background: 'rgba(0,212,170,0.1)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}><AppleEmoji symbol="💰" size={16} /></div>
                   <div>
                     <div style={{ fontWeight: 600, fontSize: '14px' }}>Cüzdan Bakiyesi</div>
                     <div style={{ fontSize: '11px', color: 'var(--togg-teal)' }}>Mevcut: {user.balance.toFixed(2)} ₺</div>
@@ -301,7 +304,7 @@ export default function EndDrive() {
                 {user.balance > 0 && (
                   <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
                     <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                      <div style={{ width: '32px', height: '32px', borderRadius: '8px', background: 'rgba(0,212,170,0.1)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '16px' }}>💰</div>
+                      <div style={{ width: '32px', height: '32px', borderRadius: '8px', background: 'rgba(0,212,170,0.1)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}><AppleEmoji symbol="💰" size={16} /></div>
                       <div style={{ fontWeight: 600, fontSize: '13px' }}>Cüzdan Bakiyesi</div>
                     </div>
                     <div style={{ fontWeight: 700, color: 'var(--togg-teal)' }}>-{user.balance.toFixed(2)} ₺</div>
@@ -309,7 +312,7 @@ export default function EndDrive() {
                 )}
                 <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
                   <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                    <div style={{ width: '32px', height: '32px', borderRadius: '8px', background: 'rgba(255,255,255,0.05)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '16px' }}>💳</div>
+                    <div style={{ width: '32px', height: '32px', borderRadius: '8px', background: 'rgba(255,255,255,0.05)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}><AppleEmoji symbol="💳" size={16} /></div>
                     <div>
                       <div style={{ fontWeight: 600, fontSize: '13px' }}>Kredi Kartı</div>
                       <div style={{ fontSize: '11px', color: 'var(--togg-gray-400)' }}>**** **** **** {user.cards[0].last4}</div>
@@ -338,7 +341,7 @@ export default function EndDrive() {
             <p style={{ color: 'var(--togg-gray-400)', fontSize: '13px', marginBottom: '14px' }}>
               Deneyiminizi 1-5 arası puanlayın
             </p>
-            <StarRating onRate={setRating} />
+            <StarRating rating={rating} onRatingChange={setRating} />
           </div>
         </div>
       </div>

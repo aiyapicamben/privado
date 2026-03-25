@@ -38,7 +38,7 @@ function AppContent() {
         base: 'https://cdn.jsdelivr.net/npm/emoji-datasource-apple@15.0.1/',
       });
     }
-  });
+  }, [appState]);
 
   const renderScreen = () => {
     switch (appState) {

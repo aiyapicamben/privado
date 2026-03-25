@@ -3,6 +3,7 @@ import { useApp, APP_STATES } from '../context/AppContext';
 import { getVehicleImage } from '../data/mockData';
 import StatusBar from '../components/StatusBar';
 import SwipeButton from '../components/SwipeButton';
+import AppleEmoji from '../components/AppleEmoji';
 
 export default function ActiveDrive() {
   const { navigateTo, selectedVehicle, driveState, setDriveState, showToast, sendTelemetryCommand } = useApp();
@@ -121,8 +122,8 @@ export default function ActiveDrive() {
           </p>
           <div style={{
             fontSize: '46px', fontWeight: 900, fontVariantNumeric: 'tabular-nums', letterSpacing: '2px',
-            background: isPaused ? 'linear-gradient(135deg, #ffa502, #ff6348)' : 'var(--gradient-primary)',
-            WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', lineHeight: 1,
+            color: isPaused ? '#ffa502' : 'var(--togg-teal)', lineHeight: 1,
+            textShadow: isPaused ? '0 4px 20px rgba(255,165,2,0.3)' : '0 4px 20px rgba(0,212,170,0.3)'
           }}>
             {formatTime(elapsed)}
           </div>
@@ -175,7 +176,7 @@ export default function ActiveDrive() {
             alignItems: 'center', gap: '8px', color: acOn ? 'var(--togg-teal)' : '#fff',
             transition: 'all 300ms ease'
           }}>
-            <span style={{ fontSize: '20px' }}>{acOn ? '🌬️' : '🌡️'}</span>
+            <AppleEmoji symbol={acOn ? '❄️' : '🔥'} size={24} />
             <span style={{ fontSize: '11px', fontWeight: 600 }}>Klima</span>
           </button>
 
@@ -194,7 +195,7 @@ export default function ActiveDrive() {
             alignItems: 'center', gap: '8px', color: lightsOn ? '#ffa502' : '#fff',
             transition: 'all 300ms ease'
           }}>
-            <span style={{ fontSize: '20px' }}>💡</span>
+            <AppleEmoji symbol="💡" size={24} />
             <span style={{ fontSize: '11px', fontWeight: 600 }}>Farlar</span>
           </button>
 
@@ -213,7 +214,7 @@ export default function ActiveDrive() {
             alignItems: 'center', gap: '8px', color: trunkOpen ? '#4facfe' : '#fff',
             transition: 'all 300ms ease'
           }}>
-            <span style={{ fontSize: '20px' }}>🚘</span>
+            <AppleEmoji symbol="🚘" size={24} />
             <span style={{ fontSize: '11px', fontWeight: 600 }}>Bagaj</span>
           </button>
         </div>
@@ -234,7 +235,9 @@ export default function ActiveDrive() {
           {isCommandLoading ? (
             <><div className="animate-spin" style={{ width: '16px', height: '16px', border: '2px solid currentColor', borderTopColor: 'transparent', borderRadius: '50%' }} /> İletişim Kuruluyor...</>
           ) : (
-            isPaused ? '▶ Kapıları Aç & Devam Et' : '🔒 Kapıları Kilitle & Bekle'
+            isPaused 
+              ? <><AppleEmoji symbol="▶️" size={16} style={{marginRight: '4px'}} /> Kapıları Aç & Devam Et</> 
+              : <><AppleEmoji symbol="🔒" size={16} style={{marginRight: '4px'}} /> Kapıları Kilitle & Bekle</>
           )}
         </button>
         <SwipeButton onSwipe={handleEndDrive} label="Sürüşü Bitir" icon="■" />
