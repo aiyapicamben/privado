@@ -1,0 +1,20 @@
+{
+  "short_name": "Turla",
+  "name": "Turla - Togg Bireysel Paylaşım Platformu",
+  "description": "Togg araçlarının bireysel yatırımcılara ait olduğu, kullanıcıların dakika bazlı kiralayabildiği premium araç paylaşım platformu.",
+  "icons": [
+    {
+      "src": "/favicon.svg",
+      "type": "image/svg+xml",
+      "sizes": "512x512",
+      "purpose": "any maskable"
+    }
+  ],
+  "start_url": "/",
+  "background_color": "#0a0f1e",
+  "theme_color": "#0a0f1e",
+  "display": "standalone",
+  "orientation": "portrait",
+  "display_override": ["fullscreen", "minimal-ui"],
+  "categories": ["travel", "navigation"]
+}

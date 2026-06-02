@@ -2,22 +2,32 @@
 <html lang="tr">
   <head>
     <meta charset="UTF-8" />
-    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+    <link rel="icon" type="image/svg+xml" href="/privado/favicon.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
     <meta name="theme-color" content="#0a0f1e" />
     <meta name="apple-mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
     <meta name="description" content="Tur At - TOGG ile araç paylaşımı · Elektrikli araçlarla şehir içi ulaşımın en akıllı yolu" />
+    <link rel="manifest" href="/privado/manifest.json" />
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
-    <title>Tur At - Akıllı Araç Paylaşımı</title>
-    <script type="module" crossorigin src="/privado/assets/index-DyhMD8kN.js"></script>
-    <link rel="stylesheet" crossorigin href="/privado/assets/index-qfPsWJH4.css">
+    <title>Turla - Togg Bireysel Paylaşım Platformu</title>
+    <script type="module" crossorigin src="/privado/assets/index-BvwNjWXW.js"></script>
+    <link rel="stylesheet" crossorigin href="/privado/assets/index-DGEexR0H.css">
   </head>
   <body>
     <div id="root"></div>
     <script src="https://unpkg.com/twemoji@latest/dist/twemoji.min.js" crossorigin="anonymous"></script>
+    <script>
+      if ('serviceWorker' in navigator) {
+        window.addEventListener('load', () => {
+          navigator.serviceWorker.register('/sw.js')
+            .then(reg => console.log('ServiceWorker registration successful with scope: ', reg.scope))
+            .catch(err => console.error('ServiceWorker registration failed: ', err));
+        });
+      }
+    </script>
   </body>
 </html>
